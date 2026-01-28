@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Delivery MVP</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Delivery MVP</div>
+    <button id="cartBtn" class="btn">Carrinho (<span id="cartCount">0</span>)</button>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>Restaurantes</h2>
+      <div id="restaurants" class="grid"></div>
+    </section>
+
+    <section id="menuSection" class="hidden">
+      <div class="row between center">
+        <h2 id="restaurantTitle">Cardápio</h2>
+        <button id="backBtn" class="btn ghost">Voltar</button>
+      </div>
+      <div id="items" class="grid"></div>
+    </section>
+  </main>
+
+  <div id="cartModal" class="modal hidden">
+    <div class="modalCard">
+      <div class="row between center">
+        <h3>Seu carrinho</h3>
+        <button id="closeCart" class="btn ghost">Fechar</button>
+      </div>
+
+      <div id="cartList" class="cartList"></div>
+
+      <div class="row between totalRow">
+        <strong>Total:</strong>
+        <strong>R$ <span id="cartTotal">0.00</span></strong>
+      </div>
+
+      <hr />
+
+      <h4>Finalizar pedido</h4>
+      <form id="checkoutForm" class="form">
+        <input id="name" placeholder="Seu nome" required />
+        <input id="address" placeholder="Endereço completo" required />
+        <select id="payment" required>
+          <option value="">Pagamento</option>
+          <option>Pix</option>
+          <option>Cartão</option>
+          <option>Dinheiro</option>
+        </select>
+        <textarea id="notes" placeholder="Observações (opcional)"></textarea>
+
+        <button class="btn primary" type="submit">Enviar pedido</button>
+      </form>
+
+      <p id="orderInfo" class="hint"></p>
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
