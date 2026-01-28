@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Delivery MVP</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Admin</div>
+    <button id="logoutBtn" class="btn ghost hidden">Sair</button>
+  </header>
+
+  <main class="container">
+    <section id="loginBox" class="card">
+      <h2>Login</h2>
+      <form id="loginForm" class="form">
+        <input id="email" type="email" placeholder="Email" required />
+        <input id="pass" type="password" placeholder="Senha" required />
+        <button class="btn primary" type="submit">Entrar</button>
+      </form>
+      <p id="loginMsg" class="hint"></p>
+    </section>
+
+    <section id="adminArea" class="hidden">
+      <div class="grid">
+        <div class="card">
+          <h3>Novo restaurante</h3>
+          <form id="restForm" class="form">
+            <input id="rName" placeholder="Nome" required />
+            <input id="rDesc" placeholder="Descrição" />
+            <button class="btn primary" type="submit">Salvar</button>
+          </form>
+          <div id="restList" class="hint"></div>
+        </div>
+
+        <div class="card">
+          <h3>Novo item</h3>
+          <form id="itemForm" class="form">
+            <select id="itemRest" required></select>
+            <input id="iName" placeholder="Nome do item" required />
+            <input id="iPrice" type="number" step="0.01" placeholder="Preço" required />
+            <button class="btn primary" type="submit">Salvar</button>
+          </form>
+          <div id="itemList" class="hint"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/admin.js"></script>
+</body>
+</html>
