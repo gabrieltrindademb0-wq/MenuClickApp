@@ -4,15 +4,16 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-aut
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_STORAGE",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyC5KeS7dONR3bnxno92d5j3jcCJbmJOv-E",
+  authDomain: "menuclick-ef41d.firebaseapp.com",
+  projectId: "menuclick-ef41d",
+  storageBucket: "menuclick-ef41d.firebasestorage.app",
+  messagingSenderId: "114286632819",
+  appId: "1:114286632819:web:35e85eb221152f725d2f06"
 };
 
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
