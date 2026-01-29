@@ -81,14 +81,14 @@ payBtn?.addEventListener("click", async () => {
 
     const data = await resp.json();
 
-    if (!data?.paymentUrl) {
-      showPay("Não foi possível gerar o pagamento. Tente novamente.", true);
-      payBtn.disabled = false;
-      return;
-    }
+    if (!data?.init_point) {
+  showPay("Não foi possível gerar o pagamento. Tente novamente.", true);
+  payBtn.disabled = false;
+  return;
+}
 
-    // Abre o Checkout Pro do Mercado Pago
-    window.location.href = data.paymentUrl;
+// Abre o Checkout Pro do Mercado Pago
+window.location.href = data.init_point;
   } catch (err) {
     console.error(err);
     showPay("Erro ao gerar pagamento. Verifique o backend (Vercel).", true);
