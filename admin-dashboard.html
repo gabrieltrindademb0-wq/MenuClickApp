@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Gestão - Restaurante</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <style>
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .tabBtn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 16px; font-weight: bold; }
+    .tabBtn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+    .hidden { display: none; }
+    .orderCard { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <div class="row">
+        <div class="brand">Painel do Parceiro</div>
+        <button class="btn" id="btnLogout">Sair</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 class="h1" id="restName">Carregando restaurante...</h1>
+
+    <div class="tabs">
+      <button class="tabBtn active" onclick="showTab('orders')">Pedidos em Aberto</button>
+      <button class="tabBtn" onclick="showTab('menu')">Meu Cardápio</button>
+    </div>
+
+    <div id="tab-orders">
+      <p class="hint">Pedidos chegando em tempo real...</p>
+      <div id="ordersList"></div>
+    </div>
+
+    <div id="tab-menu" class="hidden">
+      <div class="card">
+        <h3 class="cardTitle">Adicionar Produto</h3>
+        <input class="input" id="prodName" placeholder="Nome (ex: X-Bacon)" style="margin-bottom:8px">
+        <input class="input" id="prodDesc" placeholder="Descrição" style="margin-bottom:8px">
+        <input class="input" type="number" id="prodPrice" placeholder="Preço (ex: 25.00)" style="margin-bottom:8px">
+        <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
+      </div>
+      <hr>
+      <h3>Seus Itens:</h3>
+      <div id="menuList" class="grid"></div>
+    </div>
+
+  </div>
+
+  <script>
+    function showTab(tab) {
+      document.getElementById('tab-orders').classList.toggle('hidden', tab !== 'orders');
+      document.getElementById('tab-menu').classList.toggle('hidden', tab !== 'menu');
+      document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+  <script type="module" src="./js/admin-dashboard.js"></script>
+</body>
+</html>
