@@ -1,24 +1,40 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Acompanhar Pedido</title>
-  <link rel="stylesheet" href="./css/styles.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Seu pedido</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Acompanhar Pedido</div>
-  </header>
-
-  <main class="container">
-    <div class="card">
-      <h2>Seu pedido</h2>
-      <p class="hint">Código: <span id="orderId"></span></p>
-      <h3>Status: <span id="status"></span></h3>
-      <p class="hint" id="updated"></p>
+  <div class="topbar">
+    <div class="container">
+      <div class="row">
+        <div class="brand">Delivery MVP</div>
+        <a class="btn" href="./index.html">Voltar</a>
+      </div>
     </div>
-  </main>
+  </div>
+
+  <div class="container" style="max-width:900px">
+    <div class="card">
+      <h1 class="h1" style="margin-top:0">Seu pedido</h1>
+
+      <p class="hint">Código: <span id="orderId">(carregando)</span></p>
+
+      <div style="margin-top:10px">
+        <div style="font-weight:800;font-size:18px">Status: <span id="status">—</span></div>
+        <p class="hint" id="updated">—</p>
+      </div>
+
+      <div class="payBox" id="payBox">
+        <h2 style="margin:0 0 8px 0">Pagamento</h2>
+        <p class="hint" id="payHint">Carregando...</p>
+
+        <button class="btn btnAccent hidden" id="payBtn">Pagar agora</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="./js/order.js"></script>
 </body>

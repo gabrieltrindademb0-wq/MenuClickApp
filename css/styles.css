@@ -1,70 +1,72 @@
 :root{
-  --bg:#0b0f14;
-  --card:#121a22;
-  --text:#e8eef6;
-  --muted:#9bb0c7;
-  --primary:#ff6a00;
-  --border:#243244;
+  --bg:#070b12;
+  --card:#0d1420;
+  --border:rgba(255,255,255,.08);
+  --text:#eaf0ff;
+  --muted:rgba(234,240,255,.65);
+  --accent:#ff7a00;
+  --accent2:#ff9b3d;
 }
 
-*{ box-sizing:border-box; font-family: system-ui, Segoe UI, Arial; }
-body{ margin:0; background:var(--bg); color:var(--text); }
-a{ color:inherit; }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:radial-gradient(1200px 800px at 20% -10%, #12203a, var(--bg));
+  color:var(--text);
+}
+a{color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:18px}
 
 .topbar{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 16px; border-bottom:1px solid var(--border);
-  position:sticky; top:0; background:rgba(11,15,20,.92); backdrop-filter: blur(8px);
+  position:sticky;top:0;z-index:10;
+  background:rgba(7,11,18,.75);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--border);
 }
-.brand{ font-weight:800; letter-spacing:.2px; }
-
-.container{ padding:16px; max-width:1000px; margin:0 auto; }
-
-.grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
-.card{
-  background:var(--card); border:1px solid var(--border);
-  border-radius:14px; padding:14px;
-  text-align:left;
-}
-.cardTitle{ font-weight:700; margin-bottom:6px; }
-
+.topbar .row{display:flex;align-items:center;gap:14px;justify-content:space-between}
+.brand{font-weight:800;letter-spacing:.3px}
 .btn{
   border:1px solid var(--border);
-  background:transparent; color:var(--text);
-  padding:10px 12px; border-radius:12px; cursor:pointer;
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
 }
-.btn.primary{ background:var(--primary); border-color:transparent; color:#111; font-weight:700; }
-.btn.ghost{ opacity:.9; }
-.btn.full{ width:100%; margin-top:10px; }
+.btn:hover{border-color:rgba(255,255,255,.16)}
+.btnAccent{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:#1a0d00;font-weight:800;
+}
+.badge{opacity:.9;font-weight:700}
 
-.hidden{ display:none !important; }
-.hint{ color:var(--muted); font-size:14px; }
+.h1{font-size:28px;margin:16px 0 10px}
+.hint{color:var(--muted);margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:920px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
 
-.row{ display:flex; }
-.gap{ gap:8px; }
-.between{ justify-content:space-between; }
-.center{ align-items:center; }
+.card{
+  border:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  border-radius:18px;
+  padding:14px;
+  overflow:hidden;
+}
+.cardTitle{font-size:18px;margin:8px 0 4px;font-weight:800}
+.cardSub{margin:0;color:var(--muted);font-size:14px}
 
-.modal{
-  position:fixed; inset:0; background:rgba(0,0,0,.6);
-  display:flex; align-items:center; justify-content:center; padding:16px;
+.input{
+  width:100%;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:rgba(0,0,0,.25);
+  color:var(--text);
 }
-.modalCard{
-  width:min(720px, 100%); background:var(--card); border:1px solid var(--border);
-  border-radius:16px; padding:14px;
-}
-.form{ display:grid; gap:10px; margin-top:10px; }
-input, select, textarea{
-  width:100%; padding:10px 12px; border-radius:12px;
-  border:1px solid var(--border); background:#0e141c; color:var(--text);
-}
-textarea{ min-height:80px; resize:vertical; }
 
-.cartList{ display:grid; gap:10px; margin:10px 0; }
-.cartItem{
-  display:flex; justify-content:space-between; align-items:center;
-  gap:12px; padding:10px; border:1px solid var(--border); border-radius:12px;
-}
-.cartName{ font-weight:700; }
-.totalRow{ margin:10px 0; }
-hr{ border:none; border-top:1px solid var(--border); margin:12px 0; }
+hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+.payBox{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.hidden{display:none !important}

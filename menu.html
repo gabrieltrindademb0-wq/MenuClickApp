@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Cardápio</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <div class="row">
+        <div class="brand">Cardápio</div>
+        <a class="btn" href="./index.html">Voltar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 class="h1" id="restName">Restaurante</h1>
+    <div class="grid" id="menuGrid">
+      </div>
+
+    <div class="payBox" style="margin-top:40px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3>Total: <span id="totalDisplay">R$ 0,00</span></h3>
+        <button class="btn btnAccent" id="finishBtn" disabled>Finalizar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/menu.js"></script>
+</body>
+</html>

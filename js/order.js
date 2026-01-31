@@ -2,14 +2,12 @@
 import { db } from "./firebase.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-// ✅ URL do seu backend (Vercel) - troque pelo seu domínio
+// ✅ Troque pelo seu domínio do backend Vercel:
 const BACKEND_URL = "https://menuclick-backend.vercel.app";
 
-// Lê o ID do pedido pela URL: order.html?order=XXXX
 const params = new URLSearchParams(location.search);
 const orderId = params.get("order");
 
-// Elementos da tela
 const elOrderId = document.getElementById("orderId");
 const elStatus = document.getElementById("status");
 const elUpdated = document.getElementById("updated");
@@ -24,6 +22,8 @@ function showPay(text, showButton) {
   if (payBtn) payBtn.classList.toggle("hidden", !showButton);
 }
 
+let lastPaymentUrl = "";
+
 if (!orderId) {
   if (elStatus) elStatus.textContent = "Pedido inválido";
   showPay("Pedido inválido.", false);
@@ -37,17 +37,20 @@ if (!orderId) {
       return;
     }
 
-    const data = snap.data();
-
+    const data = snap.data() || {};
     if (elStatus) elStatus.textContent = data.status || "—";
     if (elUpdated) elUpdated.textContent = "Atualiza automaticamente.";
 
     const paymentStatus = data.paymentStatus || "unpaid";
     const paymentUrl = data.paymentUrl || "";
+    lastPaymentUrl = paymentUrl;
 
-    if (paymentStatus === "paid" || paymentStatus === "approved") {
+    if (paymentStatus === "paid") {
       showPay("Pagamento confirmado ✅", false);
-    } else if (paymentUrl) {
+      return;
+    }
+
+    if (paymentUrl) {
       showPay("Pagamento pendente. Clique para pagar.", true);
     } else {
       showPay("Pagamento pendente. Gere o link de pagamento.", true);
@@ -58,6 +61,13 @@ if (!orderId) {
 payBtn?.addEventListener("click", async () => {
   try {
     payBtn.disabled = true;
+
+    // Se já existe link salvo, abre direto
+    if (lastPaymentUrl) {
+      window.location.href = lastPaymentUrl;
+      return;
+    }
+
     showPay("Gerando link de pagamento...", false);
 
     const resp = await fetch(`${BACKEND_URL}/api/create_preference`, {
