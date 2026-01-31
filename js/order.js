@@ -3,7 +3,7 @@ import { db } from "./firebase.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 // ✅ Troque pelo seu domínio do backend Vercel:
-const BACKEND_URL = "https://menuclick-backend.vercel.app";
+const BACKEND_URL = "https://menuclick-backend-6175ydag1-gabriel-trindades-projects-d84b41c8.vercel.app/";
 
 const params = new URLSearchParams(location.search);
 const orderId = params.get("order");
