@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Entrar - Delivery</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+</head>
+<body>
+  <div class="container" style="max-width:400px; margin-top:60px">
+    <div class="card">
+      <h1 class="h1">Bem-vindo de volta</h1>
+      
+      <input class="input" type="email" id="email" placeholder="E-mail" style="margin-bottom:10px"/>
+      <input class="input" type="password" id="password" placeholder="Senha" style="margin-bottom:10px"/>
+
+      <button class="btn btnAccent" id="btnLogin" style="width:100%">Entrar</button>
+      
+      <p class="hint" style="margin-top:15px; text-align:center">
+        Novo por aqui? <a href="signup.html" style="text-decoration:underline">Criar conta</a>
+      </p>
+      <hr/>
+      <p class="hint" style="text-align:center; font-size:12px">
+        É lojista? Use seu login de parceiro aqui também.
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loginUser, checkLoginStatus } from "./js/auth.js";
+
+    checkLoginStatus(false);
+
+    document.getElementById("btnLogin").onclick = async () => {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      try {
+        await loginUser(email, pass);
+        // O redirecionamento acontece no checkLoginStatus automaticamente
+      } catch (e) {
+        alert("Erro ao entrar. Verifique e-mail e senha.");
+      }
+    };
+  </script>
+</body>
+</html>
