@@ -3,11 +3,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
-  // ✅ COLE AQUI O SEU firebaseConfig
-  // apiKey: "...",
-  // authDomain: "...",
-  // projectId: "...",
-  // ...
+  apiKey: "AIzaSyC5KeS7dONR3bnxno92d5j3jcCJbmJOv-E",
+  authDomain: "menuclick-ef41d.firebaseapp.com",
+  projectId: "menuclick-ef41d",
+  storageBucket: "menuclick-ef41d.firebasestorage.app",
+  messagingSenderId: "114286632819",
+  appId: "1:114286632819:web:96683df59632ba225d2f06",
+  measurementId: "G-DHL78T1WZ0"
 };
 
 const app = initializeApp(firebaseConfig);
