@@ -1,70 +1,181 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Cadastro - Delivery</title>
+  <title>Criar conta - MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
+  <link rel="stylesheet" href="./css/auth.css"/>
 </head>
-<body>
-  <div class="container" style="max-width:400px; margin-top:40px">
-    <div class="card">
-      <h1 class="h1">Crie sua conta</h1>
-      <p class="hint">Preencha seus dados para pedir.</p>
+<body class="auth">
+  <div class="authWrap">
+    <div class="authCard">
+      <section class="authHero">
+        <div class="brandRow">
+          <div class="logoDot">🔥</div>
+          <strong>MenuClick</strong>
+        </div>
+        <h2>Crie sua conta</h2>
+        <p>Peça em restaurantes, mercados, farmácias e muito mais — tudo em um só lugar.</p>
+        <ul>
+          <li>Entrega rápida e acompanhamento do pedido</li>
+          <li>Ofertas e combos direto na tela</li>
+          <li>Suporte e segurança no pagamento</li>
+        </ul>
+      </section>
 
-      <input class="input" type="text" id="name" placeholder="Nome Completo" required style="margin-bottom:10px"/>
-      <input class="input" type="text" id="cpf" placeholder="CPF" required style="margin-bottom:10px"/>
-      <input class="input" type="tel" id="phone" placeholder="Telefone/WhatsApp" required style="margin-bottom:10px"/>
-      <textarea class="input" id="address" placeholder="Endereço completo (Rua, Nº, Bairro)" rows="3" style="margin-bottom:10px"></textarea>
-      
-      <hr/>
-      
-      <input class="input" type="email" id="email" placeholder="Seu E-mail" required style="margin-bottom:10px"/>
-      <input class="input" type="password" id="password" placeholder="Senha segura" required style="margin-bottom:10px"/>
+      <section class="authPanel">
+        <div class="topRow">
+          <div>
+            <h1>Cadastro</h1>
+            <p class="sub">Preencha seus dados para começar.</p>
+          </div>
+          <button class="btnIcon" id="themeToggle" title="Tema" aria-label="Tema">🌙</button>
+        </div>
 
-      <button class="btn btnAccent" id="btnSignup" style="width:100%">Cadastrar</button>
-      
-      <p class="hint" style="margin-top:15px; text-align:center">
-        Já tem conta? <a href="login.html" style="text-decoration:underline">Entrar</a>
-      </p>
+        <button class="btnGoogle" id="btnGoogle">
+          <span style="font-size:18px">G</span>
+          Continuar com Google
+        </button>
+
+        <div class="divider">ou</div>
+
+        <div class="formGrid">
+          <div class="field span2">
+            <label>Nome completo</label>
+            <input class="input" id="name" placeholder="Seu nome" autocomplete="name"/>
+          </div>
+
+          <div class="field">
+            <label>CPF</label>
+            <input class="input" id="cpf" placeholder="000.000.000-00" inputmode="numeric"/>
+          </div>
+
+          <div class="field">
+            <label>WhatsApp</label>
+            <input class="input" id="phone" placeholder="(DD) 9xxxx-xxxx" inputmode="tel" autocomplete="tel"/>
+          </div>
+
+          <div class="field">
+            <label>Rua</label>
+            <input class="input" id="rua" placeholder="Rua / Av." autocomplete="address-line1"/>
+          </div>
+
+          <div class="field">
+            <label>Número</label>
+            <input class="input" id="numero" placeholder="Nº" inputmode="numeric"/>
+          </div>
+
+          <div class="field">
+            <label>Bairro</label>
+            <input class="input" id="bairro" placeholder="Bairro"/>
+          </div>
+
+          <div class="field">
+            <label>CEP</label>
+            <input class="input" id="cep" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code"/>
+          </div>
+
+          <div class="field span2">
+            <label>Complemento (opcional)</label>
+            <input class="input" id="complemento" placeholder="Apto, bloco, referência..."/>
+          </div>
+
+          <div class="field span2">
+            <label>E-mail</label>
+            <input class="input" id="email" placeholder="seu@email.com" autocomplete="email"/>
+          </div>
+
+          <div class="field">
+            <label>Senha</label>
+            <input class="input" id="password" type="password" placeholder="Crie uma senha" autocomplete="new-password"/>
+          </div>
+
+          <div class="field">
+            <label>Confirmar senha</label>
+            <input class="input" id="password2" type="password" placeholder="Repita a senha" autocomplete="new-password"/>
+          </div>
+
+          <div class="field span2">
+            <button class="btn btnAccent" id="btnSignup" style="width:100%">Criar conta</button>
+          </div>
+        </div>
+
+        <div class="rowBetween">
+          <span style="color:var(--muted); font-size:12px">Ao continuar, você concorda com nossos termos.</span>
+        </div>
+
+        <p class="smallNote">
+          Já tem conta? <a href="login-cliente.html" style="text-decoration:underline">Entrar</a>
+        </p>
+      </section>
     </div>
   </div>
 
   <script type="module">
-    import { registerUser, checkLoginStatus } from "./js/auth.js";
+    import { registerUser, checkLoginStatus, isValidEmail, isValidPhoneBR, loginWithGoogleCustomer } from "./js/auth.js";
+    import { initThemeToggle } from "./js/theme.js";
 
-    checkLoginStatus(false); // Verifica se já está logado
+    
+    initThemeToggle();
+checkLoginStatus(false);
 
-    document.getElementById("btnSignup").onclick = async () => {
-      const name = document.getElementById("name").value;
-      const cpf = document.getElementById("cpf").value;
-      const phone = document.getElementById("phone").value;
-      const address = document.getElementById("address").value;
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
+    const btn = document.getElementById("btnSignup");
 
-      if(!name || !cpf || !email || !pass) {
-        alert("Preencha os campos obrigatórios!");
+    function val(v){ return (v || "").trim(); }
+
+    document.getElementById("btnGoogle").onclick = async () => {
+      try{
+        await loginWithGoogleCustomer();
+      }catch(e){
+        console.error(e);
+        alert("Não foi possível entrar com Google. Verifique se o provedor Google está ativado no Firebase Auth.");
+      }
+    };
+
+    btn.onclick = async () => {
+      const name = val(document.getElementById("name").value);
+      const cpf = val(document.getElementById("cpf").value);
+      const phone = val(document.getElementById("phone").value);
+
+      const rua = val(document.getElementById("rua").value);
+      const numero = val(document.getElementById("numero").value);
+      const bairro = val(document.getElementById("bairro").value);
+      const cep = val(document.getElementById("cep").value);
+      const complemento = val(document.getElementById("complemento").value);
+
+      const email = val(document.getElementById("email").value).toLowerCase();
+      const pass = document.getElementById("password").value || "";
+      const pass2 = document.getElementById("password2").value || "";
+
+      if(!name){ alert("Informe seu nome."); return; }
+      if(!cpf){ alert("Informe seu CPF."); return; }
+      if(!phone || !isValidPhoneBR(phone)){ alert("Informe um WhatsApp válido com DDD."); return; }
+
+      if(!rua || !numero || !bairro || !cep){
+        alert("Complete seu endereço (Rua, Número, Bairro e CEP).");
         return;
       }
 
-      try {
-        const btn = document.getElementById("btnSignup");
-        btn.disabled = true;
-        btn.innerText = "Criando...";
+      if(!isValidEmail(email)){ alert("Informe um e-mail válido."); return; }
+      if(pass.length < 6){ alert("A senha precisa ter pelo menos 6 caracteres."); return; }
+      if(pass !== pass2){ alert("As senhas não conferem."); return; }
 
-        // Cria usuário como 'customer' (cliente)
+      btn.disabled = true;
+      btn.textContent = "Criando...";
+
+      try{
         await registerUser(email, pass, {
-            name, cpf, phone, address, role: 'customer'
+          name, cpf, phone,
+          address: { rua, numero, bairro, cep, complemento },
+          role: "customer"
         });
-
-        alert("Conta criada com sucesso!");
-        // O checkLoginStatus vai redirecionar automaticamente
-      } catch (error) {
-        console.error(error);
-        alert("Erro ao criar conta: " + error.message);
-        document.getElementById("btnSignup").disabled = false;
-        document.getElementById("btnSignup").innerText = "Cadastrar";
+        // redireciona pelo checkLoginStatus
+      }catch(e){
+        console.error(e);
+        alert("Erro ao criar conta: " + (e?.message || "tente novamente"));
+        btn.disabled = false;
+        btn.textContent = "Criar conta";
       }
     };
   </script>

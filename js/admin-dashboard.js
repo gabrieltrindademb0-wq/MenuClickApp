@@ -1,6 +1,6 @@
 // js/admin-dashboard.js
 import { db } from "./firebase.js";
-import { logout, checkLoginStatus } from "./auth.js";
+import { logoutTo, checkLoginStatus } from "./auth.js";
 import { collection, query, where, getDocs, addDoc, onSnapshot, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
@@ -32,7 +32,7 @@ let myRestaurantRef = null;
 // 1. Verifica login
 checkLoginStatus(true); // true = manda pro login se não tiver logado
 
-document.getElementById("btnLogout").onclick = logout;
+document.getElementById("btnLogout").onclick = () => logoutTo("login-lojista.html");
 
 // 2. Inicializa Dashboard
 auth.onAuthStateChanged(async (user) => {
