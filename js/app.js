@@ -6,6 +6,19 @@ const elRestaurants = document.getElementById("restaurants");
 const searchInp = document.getElementById("searchInp");
 const emptyState = document.getElementById("emptyState");
 
+// Fallback: cria o emptyState caso não exista no HTML (evita erro de null.style)
+let _emptyState = emptyState;
+if (!_emptyState && elRestaurants){
+  _emptyState = document.createElement('div');
+  ___emptyState.id = 'emptyState';
+  ___emptyState.style.display = 'none';
+  ___emptyState.innerHTML = `<div class="emptyState__title">Nada por aqui</div><div>Cadastre um restaurante no painel Admin para aparecer aqui.</div>`;
+  elRestaurants.parentElement?.insertBefore(_emptyState, elRestaurants);
+}
+
+// reatribui para o restante do arquivo
+const __emptyState = _emptyState;
+
 const params = new URLSearchParams(location.search);
 const rParam = params.get("r"); // id do restaurante
 
@@ -51,10 +64,10 @@ function renderRestaurants(list){
   elRestaurants.innerHTML = "";
 
   if (!list.length){
-    emptyState.style.display = "block";
+    __emptyState.style.display = "block";
     return;
   }
-  emptyState.style.display = "none";
+  __emptyState.style.display = "none";
 
   list.forEach(r=>{
     const meta = fakeMeta(r.id);

@@ -6,186 +6,6 @@ const params = new URLSearchParams(location.search);
 const restId = params.get("r");
 
 const elRestName = document.getElementById("restName");
-<<<<<<< HEAD
-const elRestInfo = document.getElementById("restInfo");
-
-const elList = document.getElementById("productList");
-const elEmpty = document.getElementById("productsEmpty");
-
-const elChips = document.getElementById("catChips");
-const inpSearch = document.getElementById("productSearch");
-
-const overlay = document.getElementById("overlay");
-const cartSheet = document.getElementById("cartSheet");
-const productSheet = document.getElementById("productSheet");
-
-const cartBar = document.getElementById("cartBar");
-const btnOpenCart = document.getElementById("openCartBtn");
-const btnCloseCart = document.getElementById("closeCartBtn");
-const btnContinue = document.getElementById("continueBtn");
-const btnFinish = document.getElementById("finishBtn");
-const elCartItems = document.getElementById("cartItems");
-const elCartEmpty = document.getElementById("cartEmpty");
-
-const elCartCount = document.getElementById("cartCount");
-const elCartTotal = document.getElementById("cartTotal");
-const elCartSub = document.getElementById("cartSub");
-const elSubtotal = document.getElementById("subtotal");
-const elFee = document.getElementById("fee");
-const elTotal = document.getElementById("total");
-
-// Product modal
-const pName = document.getElementById("pName");
-const pPrice = document.getElementById("pPrice");
-const pDesc = document.getElementById("pDesc");
-const pThumb = document.getElementById("pThumb");
-const pNotes = document.getElementById("pNotes");
-const notesCount = document.getElementById("notesCount");
-const pMinus = document.getElementById("pMinus");
-const pPlus = document.getElementById("pPlus");
-const pQty = document.getElementById("pQty");
-const pAddBtn = document.getElementById("pAddBtn");
-const btnCloseProduct = document.getElementById("closeProductBtn");
-
-document.getElementById("backBtn")?.addEventListener("click", ()=> history.length > 1 ? history.back() : (location.href="./index.html"));
-
-/**
- * Mock do cardápio para MVP.
- * Você pode trocar para Firestore depois sem mexer no layout.
- */
-const MOCK_MENU = [
-  { id: "p1", name: "X-Burger", price: 25.00, desc: "Pão, carne, queijo e molho da casa.", cat: "Lanches" },
-  { id: "p2", name: "X-Salada", price: 28.00, desc: "Completo com alface, tomate e queijo.", cat: "Lanches" },
-  { id: "p3", name: "X-Bacon", price: 32.00, desc: "Bacon crocante + cheddar.", cat: "Lanches" },
-  { id: "p4", name: "Batata Frita", price: 15.00, desc: "Porção média, bem sequinha.", cat: "Porções" },
-  { id: "p5", name: "Onion Rings", price: 18.00, desc: "Anéis de cebola crocantes.", cat: "Porções" },
-  { id: "p6", name: "Coca-Cola", price: 8.00, desc: "Lata 350ml gelada.", cat: "Bebidas" },
-  { id: "p7", name: "Guaraná", price: 8.00, desc: "Lata 350ml.", cat: "Bebidas" },
-  { id: "p8", name: "Água", price: 4.00, desc: "Sem gás 500ml.", cat: "Bebidas" }
-];
-
-const STORAGE_KEY = () => `mc_cart_${restId || "unknown"}`;
-
-let activeCat = "Tudo";
-let activeQuery = "";
-let cart = {}; // { [id]: { item, qty, notes } }
-
-let currentProduct = null;
-let currentQty = 1;
-
-function formatBRL(v){
-  return Number(v || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-}
-
-function hashCode(str){
-  let h=0;
-  for (let i=0;i<str.length;i++) h = ((h<<5)-h) + str.charCodeAt(i) | 0;
-  return Math.abs(h);
-}
-
-function productThumbStyle(id){
-  const h = hashCode(String(id));
-  const a = 30 + (h % 40);
-  const b = 8 + (h % 18);
-  return `linear-gradient(135deg, rgba(226,93,27,.${a}), rgba(226,93,27,.${b}))`;
-}
-
-function openOverlay(){
-  overlay.classList.add("is-open");
-}
-function closeOverlay(){
-  overlay.classList.remove("is-open");
-}
-function openSheet(sheet){
-  openOverlay();
-  sheet.classList.add("is-open");
-  document.body.style.overflow = "hidden";
-}
-function closeSheet(sheet){
-  sheet.classList.remove("is-open");
-  const anyOpen = cartSheet.classList.contains("is-open") || productSheet.classList.contains("is-open");
-  if (!anyOpen){
-    closeOverlay();
-    document.body.style.overflow = "";
-  }
-}
-
-overlay?.addEventListener("click", ()=>{
-  closeSheet(productSheet);
-  closeSheet(cartSheet);
-});
-
-btnOpenCart?.addEventListener("click", ()=> openSheet(cartSheet));
-btnCloseCart?.addEventListener("click", ()=> closeSheet(cartSheet));
-btnContinue?.addEventListener("click", ()=> closeSheet(cartSheet));
-btnCloseProduct?.addEventListener("click", ()=> closeSheet(productSheet));
-
-function loadCart(){
-  try{
-    const raw = sessionStorage.getItem(STORAGE_KEY());
-    if (!raw) return;
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") cart = parsed;
-  }catch(_){}
-}
-function saveCart(){
-  try{ sessionStorage.setItem(STORAGE_KEY(), JSON.stringify(cart)); }catch(_){}
-}
-
-function cartCount(){
-  return Object.values(cart).reduce((acc, x)=> acc + (x.qty || 0), 0);
-}
-function cartSubtotal(){
-  return Object.values(cart).reduce((acc, x)=> acc + (x.qty || 0) * (x.item?.price || 0), 0);
-}
-
-function renderChips(){
-  const cats = ["Tudo", ...Array.from(new Set(MOCK_MENU.map(p=>p.cat)))];
-  elChips.innerHTML = "";
-  cats.forEach(c=>{
-    const b = document.createElement("button");
-    b.className = "mc-chip" + (c === activeCat ? " is-active" : "");
-    b.type = "button";
-    b.textContent = c;
-    b.addEventListener("click", ()=>{
-      activeCat = c;
-      renderChips();
-      renderProducts();
-    });
-    elChips.appendChild(b);
-  });
-}
-
-function filterProducts(){
-  const q = (activeQuery || "").toLowerCase().trim();
-  return MOCK_MENU.filter(p=>{
-    const catOk = activeCat === "Tudo" ? true : p.cat === activeCat;
-    const qOk = !q ? true : (p.name.toLowerCase().includes(q) || (p.desc||"").toLowerCase().includes(q));
-    return catOk && qOk;
-  });
-}
-
-function renderSkeletonProducts(){
-  elList.innerHTML = "";
-  for (let i=0;i<6;i++){
-    const row = document.createElement("div");
-    row.className = "mc-item";
-    row.style.cursor = "default";
-    row.innerHTML = `
-      <div class="mc-thumb mc-skel"></div>
-      <div class="mc-item-main">
-        <div class="mc-skel" style="height:14px;width:60%;margin:2px 0 10px;border-radius:10px"></div>
-        <div class="mc-skel" style="height:12px;width:95%;margin:0 0 6px;border-radius:10px"></div>
-        <div class="mc-skel" style="height:12px;width:80%;margin:0 0 10px;border-radius:10px"></div>
-        <div class="mc-row" style="margin-top:10px">
-          <div class="mc-skel" style="height:14px;width:80px;border-radius:10px"></div>
-          <div class="mc-skel" style="height:38px;width:110px;border-radius:999px"></div>
-        </div>
-      </div>
-    `;
-    elList.appendChild(row);
-  }
-=======
 const elRestAvatar = document.getElementById("restAvatar");
 
 const elMenu = document.getElementById("menuList");
@@ -408,7 +228,6 @@ function escapeHtml(str) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
->>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc
 }
 
 function renderProducts(){
@@ -633,20 +452,12 @@ btnFinish?.addEventListener("click", async ()=>{
   btnFinish.textContent = "Criando pedido...";
 
   try {
-<<<<<<< HEAD
-    const itemsSummary = Object.values(cart).map(x => ({
-      name: x.item.name,
-      qty: x.qty || 1,
-      price: x.item.price,
-      notes: x.notes || ""
-=======
     // Summarize cart items for the Order Object
     // (Simply grouping by name for the backend display)
     const itemsSummary = Array.from(cart.values()).map(({ item, qty }) => ({
       name: item.name,
       qty,
       price: item.price
->>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc
     }));
 
     const orderData = {
@@ -672,40 +483,6 @@ btnFinish?.addEventListener("click", async ()=>{
   }
 });
 
-<<<<<<< HEAD
-async function init(){
-  if (!restId){
-    alert("Restaurante não identificado");
-    window.location.href = "index.html";
-    return;
-  }
-
-  // Restaurant Info
-  try{
-    const docSnap = await getDoc(doc(db, "restaurants", restId));
-    if (docSnap.exists()){
-      const data = docSnap.data() || {};
-      elRestName.textContent = data.name || "Restaurante";
-    }
-  }catch(e){ console.log(e); }
-
-  // Info estética
-  elRestInfo.textContent = "⭐ 4,8 • ⏱ 25–35 min • Entrega grátis";
-
-  loadCart();
-  renderChips();
-  renderSkeletonProducts();
-  setTimeout(()=> renderProducts(), 280);
-}
-
-function escapeHtml(s){
-  return String(s||"").replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[m]));
-}
-
-init();
-=======
 // Search handlers
 if (elSearch) {
   elSearch.addEventListener("input", () => {
@@ -732,4 +509,3 @@ window.addEventListener("keydown", (e) => {
 });
 
 init();
->>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc

@@ -491,47 +491,13 @@ html[data-theme="dark"] .mc-skel{
   100%{ filter: brightness(1); }
 }
 
-<<<<<<< HEAD
-/* ---- LEGACY (mantém páginas antigas funcionando) ---- */
-.container{ width:min(980px,100%); margin:0 auto; padding:14px; }
-.topbar{ background: var(--surface); border-bottom:1px solid var(--border); position: sticky; top:0; z-index:10; }
-.row{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-.brand{ font-weight:900; }
-.btn{
-  border:1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  padding:10px 12px;
-  border-radius: 12px;
-  cursor:pointer;
-}
-.btnAccent{ background: var(--mc-orange); border-color: transparent; color:#fff; font-weight:900; }
-.input{
-  width:100%;
-  border:1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  padding: 12px 12px;
-  border-radius: 12px;
-  outline: none;
-}
-.grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
-.card{ border:1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 12px; box-shadow: var(--shadow); }
-.cardTitle{ font-weight: 900; }
-.cardSub{ color: var(--muted); font-size: 12px; }
-.h1{ font-size: 20px; font-weight: 1000; }
-.hint{ color: var(--muted); }
-.payBox{ border:1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 12px; box-shadow: var(--shadow); }
-.hidden{ display:none !important; }
-.badge{ font-weight: 900; }
-=======
 .payBox{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .hidden{display:none !important}
 
-/* ================================
+/* ====
    iFood-like light theme (opt-in)
    Adicione: <body class="ifood"> nas páginas públicas.
-   ================================ */
+   ==== */
 
 body.ifood{
   background:#f6f6f6;
@@ -562,7 +528,7 @@ body.ifood .btn{
 }
 body.ifood .btn:hover{border-color:rgba(0,0,0,.18)}
 body.ifood .btnAccent{
-  background:#ea1d2c;
+  background:var(--mc-orange);
   border:none;
   color:#fff;
 }
@@ -571,7 +537,7 @@ body.ifood .btnAccent{
   position:sticky;
   top:0;
   z-index:20;
-  background:#ea1d2c;
+  background:var(--mc-orange);
   color:#fff;
   box-shadow:0 1px 0 rgba(0,0,0,.06);
 }
@@ -602,7 +568,7 @@ body.ifood .btnAccent{
 .restAvatar{
   width:54px;height:54px;border-radius:14px;
   background:linear-gradient(135deg,#ffd1d5,#fff);
-  color:#ea1d2c;
+  color:var(--mc-orange);
   display:flex;align-items:center;justify-content:center;
   font-weight:900;font-size:22px;
   border:1px solid rgba(234,29,44,.18);
@@ -645,7 +611,7 @@ body.ifood .btnAccent{
   font-weight:650;
   font-size:13px;
 }
-.chip--active{border-color:rgba(234,29,44,.35); background:rgba(234,29,44,.08); color:#ea1d2c}
+.chip--active{border-color:rgba(234,29,44,.35); background:rgba(234,29,44,.08); color:var(--mc-orange)}
 
 .menuList{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .menuItem{
@@ -672,7 +638,7 @@ body.ifood .btnAccent{
 .addBtn{
   border:none;
   background:rgba(234,29,44,.10);
-  color:#ea1d2c;
+  color:var(--mc-orange);
   font-weight:900;
   padding:10px 12px;
   border-radius:12px;
@@ -690,7 +656,7 @@ body.ifood .btnAccent{
   width:30px;height:30px;border-radius:10px;
   border:none;cursor:pointer;
   background:rgba(234,29,44,.10);
-  color:#ea1d2c;font-size:18px;font-weight:900;
+  color:var(--mc-orange);font-size:18px;font-weight:900;
 }
 .qty__btn:hover{background:rgba(234,29,44,.16)}
 .qty__value{min-width:18px;text-align:center;font-weight:850}
@@ -715,7 +681,7 @@ body.ifood .btnAccent{
 
 .ifoodPrimary{
   border:none;
-  background:#ea1d2c;
+  background:var(--mc-orange);
   color:#fff;
   font-weight:950;
   padding:12px 14px;
@@ -746,4 +712,3 @@ body.ifood .btnAccent{
 .emptyBag{color:#666;text-align:center;padding:22px 0}
 
 .noScroll{overflow:hidden}
->>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc
