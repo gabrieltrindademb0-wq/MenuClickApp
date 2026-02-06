@@ -39,7 +39,7 @@ const MOCK_MENU = [
 const cart = new Map();
 let activeCategory = "Todos";
 
-async function init() {
+async async function init() {
   if (!restId) {
     alert("Restaurante não identificado");
     window.location.href = "index.html";

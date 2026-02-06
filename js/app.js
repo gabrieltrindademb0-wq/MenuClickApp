@@ -5,15 +5,20 @@ import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/
 const elRestaurants = document.getElementById("restaurants");
 const searchInp = document.getElementById("searchInp");
 
+// Empty state (cria se não existir no HTML)
 let emptyState = document.getElementById("emptyState");
 if (!emptyState) {
   emptyState = document.createElement("div");
   emptyState.id = "emptyState";
-  emptyState.style.padding = "20px";
-  emptyState.style.textAlign = "center";
-  emptyState.style.color = "#777";
-  emptyState.innerText = "Nenhum restaurante encontrado.";
-  document.querySelector(".mc-container")?.appendChild(emptyState);
+  emptyState.className = "emptyState";
+  emptyState.style.display = "none";
+  emptyState.innerHTML = `
+    <div class="emptyState__title">Nada por aqui</div>
+    <div>Cadastre um restaurante no painel Admin para aparecer aqui.</div>
+  `;
+  // coloca antes da lista de restaurantes se possível
+  (elRestaurants?.parentElement || document.querySelector(".mc-container") || document.body)
+    .insertBefore?.(emptyState, elRestaurants || null);
 }
 
 const params = new URLSearchParams(location.search);
@@ -22,8 +27,8 @@ const rParam = params.get("r"); // id do restaurante
 let restaurantsCache = [];
 
 function hashCode(str){
-  let h=0;
-  for (let i=0;i<str.length;i++) h = ((h<<5)-h) + str.charCodeAt(i) | 0;
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i) | 0;
   return Math.abs(h);
 }
 
@@ -36,8 +41,11 @@ function fakeMeta(id){
 }
 
 function renderSkeleton(){
+  if (!elRestaurants) return;
   elRestaurants.innerHTML = "";
-  for (let i=0;i<6;i++){
+  emptyState.style.display = "none";
+
+  for (let i=0; i<6; i++){
     const div = document.createElement("div");
     div.className = "mc-card";
     div.innerHTML = `
@@ -58,15 +66,16 @@ function renderSkeleton(){
 }
 
 function renderRestaurants(list){
+  if (!elRestaurants) return;
   elRestaurants.innerHTML = "";
 
-  if (!list.length){
+  if (!list || list.length === 0){
     emptyState.style.display = "block";
     return;
   }
   emptyState.style.display = "none";
 
-  list.forEach(r=>{
+  list.forEach(r => {
     const meta = fakeMeta(r.id);
     const div = document.createElement("div");
     div.className = "mc-card";
@@ -96,12 +105,12 @@ async function loadRestaurants(){
 
   try {
     const snap = await getDocs(collection(db, "restaurants"));
-    const list = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+    const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     restaurantsCache = list;
 
     // se tiver ?r=ID abre direto
     if (rParam){
-      const found = list.find(x=>x.id === rParam);
+      const found = list.find(x => x.id === rParam);
       if (found){
         openRestaurant(found);
         return;
@@ -112,6 +121,7 @@ async function loadRestaurants(){
     if (!list.length) showToast("Nenhum restaurante cadastrado ainda.");
   } catch (err) {
     console.error("Falha ao carregar restaurantes:", err);
+
     // fallback demo (não quebra o app)
     const demo = [
       { id: "demo-1", name: "MenuClick Demo", description: "Configure o Firebase para listar seus restaurantes." },
@@ -123,11 +133,10 @@ async function loadRestaurants(){
   }
 }
 
-
-searchInp?.addEventListener("input", ()=>{
+searchInp?.addEventListener("input", () => {
   const q = (searchInp.value || "").toLowerCase().trim();
   const filtered = restaurantsCache.filter(r =>
-    String(r.name||"").toLowerCase().includes(q)
+    String(r.name || "").toLowerCase().includes(q)
   );
   renderRestaurants(filtered);
 });
@@ -151,5 +160,5 @@ function showToast(msg){
   t.textContent = msg;
   t.classList.add("show");
   clearTimeout(window.__mcToastTimer);
-  window.__mcToastTimer = setTimeout(()=> t.classList.remove("show"), 2200);
+  window.__mcToastTimer = setTimeout(() => t.classList.remove("show"), 2200);
 }

@@ -62,8 +62,9 @@ button, input, textarea { font-family: var(--mc-font); }
 *{ box-sizing:border-box; }
 
 .mc-container{
-  width: min(980px, 100%);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 14px 14px 90px;
 }
 
@@ -77,8 +78,9 @@ button, input, textarea { font-family: var(--mc-font); }
   border-bottom: 1px solid var(--border);
 }
 .mc-header-inner{
-  width: min(980px, 100%);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 12px 14px;
   display:flex;
   align-items:center;
@@ -140,8 +142,9 @@ button, input, textarea { font-family: var(--mc-font); }
 
 /* SEARCH */
 .mc-search{
-  width: min(980px, 100%);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 0 14px 12px;
 }
 .mc-searchbox{
@@ -728,31 +731,6 @@ body.ifood .btnAccent{
   .mc-shell{ max-width: none; box-shadow: none; }
 }
 
-/* ---------- Tema: claro/escuro via data-theme ---------- */
-:root{
-  --mc-orange: #f26a21;
-  --mc-orange-2: #ff7a2e;
-  --bg: #f6f7f9;
-  --card: #ffffff;
-  --text: #14161a;
-  --muted: #6b7280;
-  --border: rgba(20,22,26,.10);
-  --shadow: 0 10px 30px rgba(0,0,0,.12);
-}
-body[data-theme="dark"]{
-  --bg: #0b0f14;
-  --card: #0f1520;
-  --text: #eef2ff;
-  --muted: rgba(238,242,255,.72);
-  --border: rgba(238,242,255,.12);
-  --shadow: 0 18px 40px rgba(0,0,0,.55);
-}
-body{
-  background: var(--bg);
-  color: var(--text);
-  transition: background .25s ease, color .25s ease;
-}
-
 /* Topbar com gradiente (evita logo “sumir” no laranja) */
 .ifoodTopbar{
   background: linear-gradient(90deg, #d9571b, var(--mc-orange));
@@ -787,12 +765,12 @@ body{
 }
 
 /* No tema escuro */
-body[data-theme="dark"] .mc-brand{
+html[data-theme="dark"] .mc-brand{
   background: rgba(15,21,32,.85);
   border: 1px solid rgba(255,255,255,.14);
 }
 
-body[data-theme="dark"] .mc-brand__name{
+html[data-theme="dark"] .mc-brand__name{
   color: #fff;              /* força aparecer no tema escuro */
 }
 
@@ -850,7 +828,7 @@ body[data-theme="dark"] .mc-brand__name{
 .mc-muted{ color: var(--muted); }
 
 /* ===== FIX CONTRASTE TEMA ESCURO ===== */
-body[data-theme="dark"]{
+html[data-theme="dark"]{
   --bg: #0b0f14;
   --card: #0f1520;
   --text: #eef2ff;
@@ -861,25 +839,25 @@ body[data-theme="dark"]{
 }
 
 /* força texto legível */
-body[data-theme="dark"] .mc-title,
-body[data-theme="dark"] .mc-card .mc-title{
+html[data-theme="dark"] .mc-title,
+html[data-theme="dark"] .mc-card .mc-title{
   color: var(--text) !important;
 }
 
-body[data-theme="dark"] .mc-desc,
-body[data-theme="dark"] .mc-card .mc-desc{
+html[data-theme="dark"] .mc-desc,
+html[data-theme="dark"] .mc-card .mc-desc{
   color: var(--muted) !important;
 }
 
-body[data-theme="dark"] .mc-badge{
+html[data-theme="dark"] .mc-badge{
   background: var(--chip) !important;
   color: var(--chip-text) !important;
   border: 1px solid var(--border) !important;
 }
 
 /* garante cards escuros no dark */
-body[data-theme="dark"] .mc-card,
-body[data-theme="dark"] .mc-cardbody{
+html[data-theme="dark"] .mc-card,
+html[data-theme="dark"] .mc-cardbody{
   background: var(--card) !important;
 }
 
