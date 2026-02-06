@@ -55,6 +55,20 @@ body.auth{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
   margin-bottom:10px;
 }
+
+.btnIcon{
+  width:40px; height:40px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor:pointer;
+  font-weight:900;
+  line-height:1;
+}
+.btnIcon:hover{ background: rgba(0,0,0,.03); }
+html[data-theme="dark"] .btnIcon:hover{ background: rgba(255,255,255,.06); }
+.btnIcon:focus{ outline:none; box-shadow: 0 0 0 4px rgba(226,93,27,.16); }
 .authPanel h1{ margin: 8px 0 8px; font-size:28px; letter-spacing:-.02em; }
 .authPanel .sub{ margin:0 0 14px; color: var(--muted); }
 

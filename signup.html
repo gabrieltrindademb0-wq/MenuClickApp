@@ -113,13 +113,11 @@
   </div>
 
   <script type="module">
-    import { registerUser, checkLoginStatus, isValidEmail, isValidPhoneBR, loginWithGoogleCustomer } from "./js/auth.js";
+    import { registerUser, logoutTo, isValidEmail, isValidPhoneBR, loginWithGoogleCustomer } from "./js/auth.js";
     import { initThemeToggle } from "./js/theme.js";
 
     
     initThemeToggle();
-checkLoginStatus(false);
-
     const btn = document.getElementById("btnSignup");
 
     function val(v){ return (v || "").trim(); }
@@ -170,7 +168,8 @@ checkLoginStatus(false);
           address: { rua, numero, bairro, cep, complemento },
           role: "customer"
         });
-        // redireciona pelo checkLoginStatus
+        // fluxo: Criar conta -> Entrar -> Menu
+        await logoutTo("login-cliente.html?created=1");
       }catch(e){
         console.error(e);
         alert("Erro ao criar conta: " + (e?.message || "tente novamente"));

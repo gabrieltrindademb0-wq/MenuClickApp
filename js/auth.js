@@ -83,7 +83,8 @@ export async function registerUser(email, password, userData) {
       phoneNorm,
       address: userData.address || {},
       role: userData.role || "customer", // customer | owner
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      ...(userData.extra || {})
     });
 
     return user;
@@ -140,21 +141,48 @@ export async function loginWithGoogleCustomer(){
 // Verificar se está logado e redirecionar
 export function checkLoginStatus(isProtected = false) {
   onAuthStateChanged(auth, async (user) => {
+    const path = window.location.pathname || "";
+
     if (user) {
-      // Se estiver na tela de login/cadastro, manda pra home correta
-      const path = window.location.pathname;
-      if (path.includes("login-cliente.html") || path.includes("login-cliente.html") || path.includes("login-lojista.html") || path.includes("signup.html") || path.includes("lojista-signup.html")) {
+      // Carrega dados do usuário
+      let role = "customer";
+      let ownerStatus = "approved";
+      try {
         const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists() && snap.data().role === "owner") {
-          window.location.href = "admin-dashboard.html";
+        const data = snap.exists() ? snap.data() : {};
+        role = data.role || "customer";
+        ownerStatus = data.ownerStatus || (role === "owner" ? "approved" : "approved");
+      } catch (e) {
+        console.error(e);
+      }
+
+      // Bloqueia acesso ao painel se ainda estiver em análise
+      if ((path.includes("admin-dashboard") || path.includes("admin.html")) && role === "owner" && ownerStatus !== "approved") {
+        window.location.href = "analise.html";
+        return;
+      }
+
+      // Se estiver em telas de login/cadastro, redireciona para a área correta
+      const isAuthPage = (
+        path.includes("login-cliente.html") ||
+        path.includes("login-lojista.html") ||
+        path.includes("signup.html") ||
+        path.includes("lojista-signup.html") ||
+        path.includes("analise.html") ||
+        path.endsWith("/login")
+      );
+
+      if (isAuthPage) {
+        if (role === "owner") {
+          window.location.href = ownerStatus === "approved" ? "admin-dashboard.html" : "analise.html";
         } else {
-          window.location.href = "index.html";
+          window.location.href = "explore.html";
         }
       }
+
     } else {
       if (isProtected) {
-        const p = window.location.pathname;
-        const isOwnerArea = p.includes("admin-dashboard") || p.includes("admin.html") || p.includes("lojista");
+        const isOwnerArea = path.includes("admin-dashboard") || path.includes("admin.html");
         window.location.href = isOwnerArea ? "login-lojista.html" : "login-cliente.html";
       }
     }

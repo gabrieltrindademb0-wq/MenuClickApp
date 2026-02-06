@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Entrar (Cliente) - MenuClick</title>
+  <title>Entrar - MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
   <link rel="stylesheet" href="./css/auth.css"/>
 </head>
@@ -12,15 +12,15 @@
     <div class="authCard">
       <section class="authHero">
         <div class="brandRow">
-          <div class="logoDot">🍽️</div>
+          <div class="logoDot">🍟</div>
           <strong>MenuClick</strong><span class="badge">Cliente</span>
         </div>
         <h2>Bem-vindo de volta</h2>
-        <p>Entre para acompanhar seus pedidos e favoritos. Lojistas também podem entrar por aqui.</p>
+        <p>Entre para salvar seus dados, agilizar pedidos e acompanhar novidades na sua cidade.</p>
         <ul>
           <li>Use <b>e-mail</b> ou <b>WhatsApp</b> para entrar</li>
           <li>Recuperação de senha em 1 clique</li>
-          <li>Login com Google para clientes</li>
+          <li>Também dá pra entrar com <b>Google</b></li>
         </ul>
       </section>
 
@@ -30,15 +30,8 @@
             <h1>Entrar</h1>
             <p class="sub">Acesse sua conta.</p>
           </div>
-          <button class="btnIcon" id="themeToggle" title="Tema" aria-label="Tema">🌙</button>
+          <button class="btnIcon" id="themeToggle" type="button" title="Tema" aria-label="Tema"><span data-icon>🌙</span></button>
         </div>
-
-        <button class="btnGoogle" id="btnGoogle">
-          <span style="font-size:18px">G</span>
-          Entrar com Google (cliente)
-        </button>
-
-        <div class="divider">ou</div>
 
         <div class="formGrid one">
           <div class="field">
@@ -56,11 +49,18 @@
             <a href="signup.html" style="text-decoration:underline; font-weight:650">Criar conta</a>
           </div>
 
-          <button class="btn btnAccent" id="btnLogin" style="width:100%; margin-top:10px">Entrar</button>
+          <button class="btn btnAccent" id="btnLogin" type="button" style="width:100%; margin-top:10px">Entrar</button>
+
+          <div class="divider">ou</div>
+          <button class="btnGoogle" id="btnGoogle" type="button">
+            <span class="gIcon">G</span>
+            Continuar com Google
+          </button>
         </div>
 
         <p class="smallNote">
-          É lojista? <a href="login-lojista.html">Acessar área do parceiro</a>.</p>
+          É lojista? <a href="login-lojista.html">Acessar área do parceiro</a>.
+        </p>
       </section>
     </div>
   </div>
@@ -69,20 +69,16 @@
     import { loginUser, checkLoginStatus, resetPassword, isValidEmail, isValidPhoneBR, isLikelyEmail, loginWithGoogleCustomer } from "./js/auth.js";
     import { initThemeToggle } from "./js/theme.js";
 
-    
     initThemeToggle();
-checkLoginStatus(false);
+    checkLoginStatus(false);
 
-    function val(v){ return (v || "").trim(); }
+    const params = new URLSearchParams(location.search);
+    if (params.get("created") === "1") {
+      // feedback simples
+      setTimeout(() => alert("Conta criada! Agora faça login para acessar o app."), 200);
+    }
 
-    document.getElementById("btnGoogle").onclick = async () => {
-      try{
-        await loginWithGoogleCustomer();
-      }catch(e){
-        console.error(e);
-        alert("Não foi possível entrar com Google. Verifique se o provedor Google está ativado no Firebase Auth.");
-      }
-    };
+    const val = (v) => (v || "").trim();
 
     document.getElementById("btnForgot").onclick = async () => {
       const id = val(document.getElementById("identifier").value).toLowerCase();
@@ -107,6 +103,16 @@ checkLoginStatus(false);
       }
     };
 
+    document.getElementById("btnGoogle").onclick = async () => {
+      try{
+        await loginWithGoogleCustomer();
+        // redireciona pelo checkLoginStatus
+      }catch(e){
+        console.error(e);
+        alert("Não foi possível entrar com Google. Verifique se o provedor Google está ativado no Firebase Auth.");
+      }
+    };
+
     document.getElementById("btnLogin").onclick = async () => {
       const identifier = val(document.getElementById("identifier").value);
       const pass = document.getElementById("password").value || "";
@@ -121,6 +127,7 @@ checkLoginStatus(false);
 
       try{
         await loginUser(identifier, pass);
+        // redireciona pelo checkLoginStatus
       }catch(e){
         console.error(e);
         alert("Erro ao entrar. Verifique seus dados.");

@@ -30,7 +30,11 @@ export async function createOwnerAndStore(form){
     cnpj: form.cnpj || "",
     phone: form.ownerPhone,
     address,
-    role: "owner"
+    role: "owner",
+    extra: {
+      ownerStatus: "pending",
+      approval: { status: "pending", createdAt: Date.now(), etaHours: 24 }
+    }
   });
 
   // 2) Cria loja (restaurants)
@@ -43,9 +47,11 @@ export async function createOwnerAndStore(form){
     categories: cleanCsv(form.storeCats),
     ownerId: user.uid,
     ownerPhoneNorm: normalizePhone(form.ownerPhone),
+    ownerEmail: form.email,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-    isActive: true
+    isActive: false,
+    approvalStatus: "pending"
   };
 
   await addDoc(collection(db, "restaurants"), payload);
