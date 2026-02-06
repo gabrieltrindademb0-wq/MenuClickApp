@@ -6,26 +6,29 @@
   <title>Delivery MVP</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<body>
-  <div class="topbar">
-    <div class="container">
-      <div class="row">
-        <div class="brand">Delivery MVP</div>
-        <button class="btn" id="cartBtn"><span class="badge">Carrinho (</span><span id="cartCount">0</span><span class="badge">)</span></button>
+<body class="ifood">
+  <header class="ifoodTopbar">
+    <div class="container ifoodTopbar__inner">
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <div style="font-weight:950">Entrega em</div>
+        <div style="opacity:.95;font-size:13px">Sua região</div>
       </div>
+      <button class="ifoodIconBtn" id="cartBtn" type="button" aria-label="Sacola">
+        🛍️<span style="margin-left:6px;font-weight:900" id="cartCount">0</span>
+      </button>
     </div>
-  </div>
+  </header>
 
-  <div class="container">
-    <h1 class="h1" id="pageTitle">Restaurantes</h1>
-    <p class="hint" id="pageHint">Escolha um restaurante para ver o cardápio.</p>
+  <div class="container ifoodPage">
+    <div class="ifoodSearch" style="margin-top:0">
+      <span class="ifoodSearch__icon">🔎</span>
+      <input id="searchInp" placeholder="Buscar restaurante" />
+    </div>
 
-    <input class="input" id="searchInp" placeholder="Buscar restaurante..." />
+    <h1 class="restName" style="margin-top:14px" id="pageTitle">Restaurantes</h1>
+    <div class="restMeta" id="pageHint">Escolha um restaurante para ver o cardápio.</div>
 
     <div class="grid" id="restaurants"></div>
-
-    <hr/>
-    <p class="hint">Teste: após finalizar um pedido, você vai para <b>order.html?order=ID</b>.</p>
   </div>
 
   <script type="module" src="./js/app.js"></script>

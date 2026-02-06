@@ -6,25 +6,67 @@
   <title>Cardápio</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<body>
-  <div class="topbar">
-    <div class="container">
-      <div class="row">
-        <div class="brand">Cardápio</div>
-        <a class="btn" href="./index.html">Voltar</a>
-      </div>
+<body class="ifood">
+  <header class="ifoodTopbar">
+    <div class="container ifoodTopbar__inner">
+      <a class="ifoodIconBtn" href="./index.html" aria-label="Voltar">←</a>
+      <div class="ifoodTopbar__title">Cardápio</div>
+      <div style="width:40px"></div>
     </div>
+  </header>
+
+  <main class="container ifoodPage">
+    <section class="restHero">
+      <div class="restHero__left">
+        <div class="restAvatar" id="restAvatar">R</div>
+        <div>
+          <h1 class="restName" id="restName">Restaurante</h1>
+          <div class="restMeta">
+            <span class="pill">⭐ 4,7</span>
+            <span class="dot">•</span>
+            <span class="pill">30–45 min</span>
+            <span class="dot">•</span>
+            <span class="pill">Entrega</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ifoodSearch">
+      <span class="ifoodSearch__icon">🔎</span>
+      <input id="itemSearch" type="text" placeholder="Buscar no cardápio" autocomplete="off" />
+      <button class="ifoodIconBtn ifoodIconBtn--ghost" id="clearSearch" aria-label="Limpar">✕</button>
+    </div>
+
+    <div class="chips" id="catChips"></div>
+
+    <div class="menuList" id="menuList"></div>
+  </main>
+
+  <div class="cartBar hidden" id="cartBar">
+    <div class="cartBar__info">
+      <div class="cartBar__items"><span id="cartCount">0</span> itens</div>
+      <div class="cartBar__total" id="totalDisplay">R$ 0,00</div>
+    </div>
+    <button class="ifoodPrimary" id="openBagBtn" type="button">Ver sacola</button>
   </div>
 
-  <div class="container">
-    <h1 class="h1" id="restName">Restaurante</h1>
-    <div class="grid" id="menuGrid">
+  <div class="sheet hidden" id="cartSheet" aria-hidden="true">
+    <div class="sheet__backdrop" id="sheetCloseBg"></div>
+    <div class="sheet__panel" role="dialog" aria-modal="true">
+      <div class="sheet__header">
+        <div class="sheet__title">Sua sacola</div>
+        <button class="ifoodIconBtn" id="sheetClose" aria-label="Fechar">✕</button>
       </div>
-
-    <div class="payBox" style="margin-top:40px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3>Total: <span id="totalDisplay">R$ 0,00</span></h3>
-        <button class="btn btnAccent" id="finishBtn" disabled>Finalizar Pedido</button>
+      <div class="sheet__content">
+        <div class="bagList" id="bagList"></div>
+      </div>
+      <div class="sheet__footer">
+        <div class="sheet__totalRow">
+          <span>Total</span>
+          <strong id="sheetTotal">R$ 0,00</strong>
+        </div>
+        <button class="ifoodPrimary ifoodPrimary--block" id="finishBtn" disabled>Finalizar pedido</button>
       </div>
     </div>
   </div>
