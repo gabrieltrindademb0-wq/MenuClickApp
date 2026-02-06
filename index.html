@@ -6,6 +6,7 @@
   <title>MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
+<<<<<<< HEAD
 <body class="mc-app">
   <header class="mc-header">
     <div class="mc-header-inner">
@@ -22,8 +23,20 @@
           <span data-icon>🌙</span>
           <small>Tema</small>
         </button>
+=======
+<body class="ifood">
+  <header class="ifoodTopbar">
+    <div class="container ifoodTopbar__inner">
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <div style="font-weight:950">Entrega em</div>
+        <div style="opacity:.95;font-size:13px">Sua região</div>
+>>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc
       </div>
+      <button class="ifoodIconBtn" id="cartBtn" type="button" aria-label="Sacola">
+        🛍️<span style="margin-left:6px;font-weight:900" id="cartCount">0</span>
+      </button>
     </div>
+<<<<<<< HEAD
 
     <div class="mc-search">
       <div class="mc-searchbox" role="search">
@@ -50,6 +63,21 @@
       <div class="mc-desc" style="min-height:auto">Não encontramos restaurantes com esse nome.</div>
     </div>
   </main>
+=======
+  </header>
+
+  <div class="container ifoodPage">
+    <div class="ifoodSearch" style="margin-top:0">
+      <span class="ifoodSearch__icon">🔎</span>
+      <input id="searchInp" placeholder="Buscar restaurante" />
+    </div>
+
+    <h1 class="restName" style="margin-top:14px" id="pageTitle">Restaurantes</h1>
+    <div class="restMeta" id="pageHint">Escolha um restaurante para ver o cardápio.</div>
+
+    <div class="grid" id="restaurants"></div>
+  </div>
+>>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc
 
   <script type="module">
     import { initThemeToggle } from "./js/theme.js";
