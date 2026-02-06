@@ -4,7 +4,17 @@ import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/
 
 const elRestaurants = document.getElementById("restaurants");
 const searchInp = document.getElementById("searchInp");
-const emptyState = document.getElementById("emptyState");
+
+let emptyState = document.getElementById("emptyState");
+if (!emptyState) {
+  emptyState = document.createElement("div");
+  emptyState.id = "emptyState";
+  emptyState.style.padding = "20px";
+  emptyState.style.textAlign = "center";
+  emptyState.style.color = "#777";
+  emptyState.innerText = "Nenhum restaurante encontrado.";
+  document.querySelector(".mc-container")?.appendChild(emptyState);
+}
 
 const params = new URLSearchParams(location.search);
 const rParam = params.get("r"); // id do restaurante
@@ -84,21 +94,35 @@ function openRestaurant(r){
 async function loadRestaurants(){
   renderSkeleton();
 
-  const snap = await getDocs(collection(db, "restaurants"));
-  const list = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-  restaurantsCache = list;
+  try {
+    const snap = await getDocs(collection(db, "restaurants"));
+    const list = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+    restaurantsCache = list;
 
-  // ✅ se tiver ?r=ID abre direto
-  if (rParam){
-    const found = list.find(x=>x.id === rParam);
-    if (found){
-      openRestaurant(found);
-      return;
+    // se tiver ?r=ID abre direto
+    if (rParam){
+      const found = list.find(x=>x.id === rParam);
+      if (found){
+        openRestaurant(found);
+        return;
+      }
     }
-  }
 
-  renderRestaurants(list);
+    renderRestaurants(list);
+    if (!list.length) showToast("Nenhum restaurante cadastrado ainda.");
+  } catch (err) {
+    console.error("Falha ao carregar restaurantes:", err);
+    // fallback demo (não quebra o app)
+    const demo = [
+      { id: "demo-1", name: "MenuClick Demo", description: "Configure o Firebase para listar seus restaurantes." },
+      { id: "demo-2", name: "Restaurante Exemplo", description: "Clique para abrir o cardápio (demo)." }
+    ];
+    restaurantsCache = demo;
+    renderRestaurants(demo);
+    showToast("Não consegui acessar o banco. Mostrando modo demo.");
+  }
 }
+
 
 searchInp?.addEventListener("input", ()=>{
   const q = (searchInp.value || "").toLowerCase().trim();
@@ -115,3 +139,17 @@ function escapeHtml(s){
 }
 
 loadRestaurants();
+
+function showToast(msg){
+  let t = document.getElementById("mcToast");
+  if (!t){
+    t = document.createElement("div");
+    t.id = "mcToast";
+    t.className = "mc-toast";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__mcToastTimer);
+  window.__mcToastTimer = setTimeout(()=> t.classList.remove("show"), 2200);
+}

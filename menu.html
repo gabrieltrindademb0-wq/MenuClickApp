@@ -6,74 +6,15 @@
   <title>Cardápio • MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<<<<<<< HEAD
-<body class="mc-app">
-  <header class="mc-header">
-    <div class="mc-header-inner">
-      <button class="mc-back" type="button" id="backBtn">← Voltar</button>
-
-      <a class="mc-brand" href="./index.html" aria-label="MenuClick" style="margin:0 auto 0 6px">
-        <img src="./assets/logo-menuclick.png" alt="Logo MenuClick"/>
-        <div style="min-width:0">
-          <strong id="restName">Restaurante</strong>
-          <div class="mc-subtitle" id="restInfo">⭐ — • ⏱ — • 💰 —</div>
-        </div>
-      </a>
-
-      <div class="mc-actions">
-        <button class="mc-iconbtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Ativar tema escuro">
-          <span data-icon>🌙</span>
-          <small>Tema</small>
-        </button>
-      </div>
-    </div>
-
-    <div class="mc-search">
-      <div class="mc-searchbox">
-        <span aria-hidden="true">🔎</span>
-        <input id="productSearch" placeholder="Buscar no cardápio..." autocomplete="off"/>
-        <span class="mc-kbd">/</span>
-      </div>
-
-      <div class="mc-chips" id="catChips" aria-label="Categorias"></div>
-    </div>
-  </header>
-
-  <main class="mc-container">
-    <div id="productList" class="mc-list"></div>
-
-    <div id="productsEmpty" class="mc-card" style="display:none;padding:16px">
-      <div class="mc-title" style="margin:0 0 6px 0">Nenhum produto encontrado</div>
-      <div class="mc-desc" style="min-height:auto">Tente buscar por outro nome ou selecione outra categoria.</div>
-    </div>
-  </main>
-
-  <!-- Bottom cart bar -->
-  <div class="mc-cartbar" id="cartBar" style="display:none">
-    <button type="button" id="openCartBtn">
-      <span>Ver sacola (<span id="cartCount">0</span>)</span>
-      <span id="cartTotal">R$ 0,00</span>
-    </button>
-  </div>
-
-  <!-- Overlay + Cart sheet -->
-  <div class="mc-overlay" id="overlay"></div>
-
-  <section class="mc-sheet" id="cartSheet" aria-label="Sacola">
-    <div class="mc-sheet-head">
-      <div style="width:100%">
-        <div class="grab" aria-hidden="true"></div>
-        <div class="mc-row">
-          <div>
-            <div class="mc-sheet-title">Sua sacola</div>
-            <div class="mc-muted" style="font-size:12px;margin-top:2px" id="cartSub">—</div>
-          </div>
-          <button class="mc-close" type="button" id="closeCartBtn">✕</button>
-        </div>
-=======
 <body class="ifood">
+  <div class="mc-shell">
   <header class="ifoodTopbar">
     <div class="container ifoodTopbar__inner">
+      <a class="mc-brand" href="./index.html" aria-label="MenuClick">
+        <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
+        <span class="mc-brand__name">MenuClick</span>
+      </a>
+<button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
       <a class="ifoodIconBtn" href="./index.html" aria-label="Voltar">←</a>
       <div class="ifoodTopbar__title">Cardápio</div>
       <div style="width:40px"></div>
@@ -132,7 +73,6 @@
           <strong id="sheetTotal">R$ 0,00</strong>
         </div>
         <button class="ifoodPrimary ifoodPrimary--block" id="finishBtn" disabled>Finalizar pedido</button>
->>>>>>> 96c179ddd244000e4107e8f4d2a5e129d74ef1bc
       </div>
     </div>
 
@@ -226,5 +166,7 @@
     });
   </script>
   <script type="module" src="./js/menu.js"></script>
+  </div>
+  <div id="mcToast" class="mc-toast"></div>
 </body>
 </html>
