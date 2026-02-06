@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>MenuClick — Cadastro de Lojista</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+</head>
+
+<body class="mc-app">
+  <div class="container" style="max-width:520px; margin-top:36px; padding-bottom:40px">
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+        <a class="mc-brand" href="./lojista.html" aria-label="Voltar">
+          <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
+          <span class="mc-brand__name">MenuClick</span>
+        </a>
+        <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
+      </div>
+
+      <h1 class="h1" style="margin-top:16px">Cadastro de Lojista</h1>
+      <p class="hint">Crie sua conta e já deixe sua loja pronta para aparecer no app.</p>
+
+      <div class="mc-formgrid">
+        <div>
+          <div class="mc-label">Nome do responsável</div>
+          <input class="input" type="text" id="ownerName" placeholder="Seu nome" required />
+        </div>
+        <div>
+          <div class="mc-label">Telefone/WhatsApp</div>
+          <input class="input" type="tel" id="ownerPhone" placeholder="(DDD) 9xxxx-xxxx" />
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="mc-label">Nome da loja</div>
+      <input class="input" type="text" id="storeName" placeholder="Ex: Pizzaria do Centro" required />
+
+      <div style="height:10px"></div>
+      <div class="mc-formgrid">
+        <div>
+          <div class="mc-label">Segmento</div>
+          <select class="input" id="segment" required>
+            <option value="restaurante">Restaurante</option>
+            <option value="mercado">Mercado</option>
+            <option value="sorveteria">Sorveteria</option>
+            <option value="farmacia">Farmácia</option>
+            <option value="bebidas">Bebidas</option>
+            <option value="petshop">Petshop</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+        <div>
+          <div class="mc-label">CEP</div>
+          <input class="input" id="storeCep" inputmode="numeric" placeholder="00000-000" maxlength="9" />
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="mc-formgrid">
+        <div>
+          <div class="mc-label">Cidade</div>
+          <input class="input" type="text" id="storeCity" placeholder="Ex: São Paulo" />
+        </div>
+        <div>
+          <div class="mc-label">Categorias da loja (opcional)</div>
+          <input class="input" type="text" id="storeCats" placeholder="Ex: Pizzas, Massas, Bebidas" />
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="mc-label">Descrição curta (opcional)</div>
+      <textarea class="input" id="storeDesc" rows="3" placeholder="Ex: Pizza artesanal, forno a lenha..." ></textarea>
+
+      <hr/>
+
+      <div class="mc-formgrid">
+        <div>
+          <div class="mc-label">E-mail</div>
+          <input class="input" type="email" id="email" placeholder="seu@email.com" required />
+        </div>
+        <div>
+          <div class="mc-label">Senha</div>
+          <input class="input" type="password" id="password" placeholder="Crie uma senha" required />
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <button class="btn btnAccent" id="btnCreate" style="width:100%">Criar conta e minha loja</button>
+      <p class="hint" id="msg" style="margin-top:12px"></p>
+
+      <p class="hint" style="margin-top:16px; text-align:center">
+        Já tem conta? <a href="login.html" style="text-decoration:underline">Entrar</a>
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    import { createOwnerAndStore } from "./js/owner.js";
+
+    initThemeToggle();
+
+    const maskCep = (v) => {
+      const d = String(v || '').replace(/\D/g,'').slice(0,8);
+      if (d.length <= 5) return d;
+      return d.slice(0,5) + '-' + d.slice(5);
+    };
+
+    const cepInp = document.getElementById('storeCep');
+    const saved = localStorage.getItem('mc_cep') || '';
+    if (cepInp && saved) cepInp.value = maskCep(saved);
+    cepInp?.addEventListener('input', () => {
+      cepInp.value = maskCep(cepInp.value);
+      if (cepInp.value.replace(/\D/g,'').length === 8) localStorage.setItem('mc_cep', cepInp.value);
+    });
+
+    const btn = document.getElementById('btnCreate');
+    const msg = document.getElementById('msg');
+
+    btn.onclick = async () => {
+      msg.textContent = '';
+      const data = {
+        ownerName: document.getElementById('ownerName').value.trim(),
+        ownerPhone: document.getElementById('ownerPhone').value.trim(),
+        storeName: document.getElementById('storeName').value.trim(),
+        segment: document.getElementById('segment').value,
+        storeCep: maskCep(document.getElementById('storeCep').value.trim()),
+        storeCity: document.getElementById('storeCity').value.trim(),
+        storeCats: document.getElementById('storeCats').value.trim(),
+        storeDesc: document.getElementById('storeDesc').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value
+      };
+
+      if (!data.ownerName || !data.storeName || !data.email || !data.password){
+        msg.textContent = 'Preencha os campos obrigatórios.';
+        msg.style.color = 'var(--muted)';
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Criando...';
+
+        await createOwnerAndStore(data);
+        alert('Conta criada! Vamos para o painel do parceiro.');
+        // O checkLoginStatus no auth.js manda o owner pro dashboard.
+        window.location.href = 'admin-dashboard.html';
+      } catch (e) {
+        console.error(e);
+        msg.textContent = 'Erro ao criar conta: ' + (e?.message || String(e));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Criar conta e minha loja';
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,11 +1,14 @@
 // js/app.js
 import { db } from "./firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { initThemeToggle } from "./theme.js";
+
+initThemeToggle();
 
 const elRestaurants = document.getElementById("restaurants");
 const searchInp = document.getElementById("searchInp");
 
-// Empty state (cria se não existir no HTML)
+// Empty state
 let emptyState = document.getElementById("emptyState");
 if (!emptyState) {
   emptyState = document.createElement("div");
@@ -14,15 +17,58 @@ if (!emptyState) {
   emptyState.style.display = "none";
   emptyState.innerHTML = `
     <div class="emptyState__title">Nada por aqui</div>
-    <div>Cadastre um restaurante no painel Admin para aparecer aqui.</div>
+    <div>Cadastre uma loja no painel do parceiro para aparecer aqui.</div>
   `;
-  // coloca antes da lista de restaurantes se possível
   (elRestaurants?.parentElement || document.querySelector(".mc-container") || document.body)
     .insertBefore?.(emptyState, elRestaurants || null);
 }
 
 const params = new URLSearchParams(location.search);
-const rParam = params.get("r"); // id do restaurante
+const rParam = params.get("r");
+const cepParam = params.get("cep") || localStorage.getItem('mc_cep') || "";
+const segmentParam = (params.get("segment") || "").toLowerCase();
+
+// Atualiza linha de entrega (se existir no HTML)
+const deliveryLine = document.getElementById('deliveryLine');
+if (deliveryLine){
+  const cepTxt = String(cepParam || '').trim();
+  deliveryLine.textContent = cepTxt ? `CEP ${cepTxt}` : "Sua região";
+}
+
+// Segmentos suportados (para pills)
+const SEGMENTS = [
+  { key: 'restaurante', label: 'Restaurantes' },
+  { key: 'mercado', label: 'Mercados' },
+  { key: 'sorveteria', label: 'Sorveterias' },
+  { key: 'farmacia', label: 'Farmácia' },
+  { key: 'bebidas', label: 'Bebidas' },
+  { key: 'petshop', label: 'Petshop' },
+  { key: 'outros', label: 'Outros' },
+];
+
+const pillWrap = document.getElementById('segmentPills');
+let activeSegment = segmentParam || '';
+
+if (pillWrap){
+  SEGMENTS.forEach(s => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mc-pill' + (s.key === activeSegment ? ' is-active' : '');
+    b.textContent = s.label;
+    b.addEventListener('click', () => {
+      activeSegment = (activeSegment === s.key) ? '' : s.key;
+      // atualiza querystring sem recarregar a página inteira
+      const u = new URL(window.location.href);
+      if (activeSegment) u.searchParams.set('segment', activeSegment);
+      else u.searchParams.delete('segment');
+      history.replaceState({}, '', u.toString());
+      pillWrap.querySelectorAll('.mc-pill').forEach(x => x.classList.remove('is-active'));
+      if (activeSegment) b.classList.add('is-active');
+      applyFilters();
+    });
+    pillWrap.appendChild(b);
+  });
+}
 
 let restaurantsCache = [];
 
@@ -34,8 +80,8 @@ function hashCode(str){
 
 function fakeMeta(id){
   const h = hashCode(String(id));
-  const rating = (4.2 + (h % 8) * 0.1).toFixed(1); // 4.2 - 4.9
-  const min = 20 + (h % 20); // 20-39
+  const rating = (4.2 + (h % 8) * 0.1).toFixed(1);
+  const min = 20 + (h % 20);
   const fee = (h % 2) ? 0 : (4.99 + (h % 7) * 0.5);
   return { rating, min, fee };
 }
@@ -96,6 +142,18 @@ function renderRestaurants(list){
   });
 }
 
+function applyFilters(){
+  const q = (searchInp?.value || "").toLowerCase().trim();
+  const filtered = restaurantsCache
+    .filter(r => String(r.name || "").toLowerCase().includes(q))
+    .filter(r => {
+      if (!activeSegment) return true;
+      const seg = String(r.segment || r.category || '').toLowerCase();
+      return seg === activeSegment;
+    });
+  renderRestaurants(filtered);
+}
+
 function openRestaurant(r){
   window.location.href = `menu.html?r=${encodeURIComponent(r.id)}`;
 }
@@ -108,7 +166,6 @@ async function loadRestaurants(){
     const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     restaurantsCache = list;
 
-    // se tiver ?r=ID abre direto
     if (rParam){
       const found = list.find(x => x.id === rParam);
       if (found){
@@ -117,28 +174,23 @@ async function loadRestaurants(){
       }
     }
 
-    renderRestaurants(list);
+    applyFilters();
     if (!list.length) showToast("Nenhum restaurante cadastrado ainda.");
   } catch (err) {
     console.error("Falha ao carregar restaurantes:", err);
 
-    // fallback demo (não quebra o app)
     const demo = [
       { id: "demo-1", name: "MenuClick Demo", description: "Configure o Firebase para listar seus restaurantes." },
       { id: "demo-2", name: "Restaurante Exemplo", description: "Clique para abrir o cardápio (demo)." }
     ];
     restaurantsCache = demo;
-    renderRestaurants(demo);
+    applyFilters();
     showToast("Não consegui acessar o banco. Mostrando modo demo.");
   }
 }
 
 searchInp?.addEventListener("input", () => {
-  const q = (searchInp.value || "").toLowerCase().trim();
-  const filtered = restaurantsCache.filter(r =>
-    String(r.name || "").toLowerCase().includes(q)
-  );
-  renderRestaurants(filtered);
+  applyFilters();
 });
 
 function escapeHtml(s){

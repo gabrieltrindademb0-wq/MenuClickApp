@@ -1,36 +1,40 @@
 // js/theme.js
+const KEY = "mc_theme";
+
+export function setTheme(theme) {
+  const t = theme === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem(KEY, t); } catch {}
+  updateThemeIcon(t);
+}
+
+export function getTheme() {
+  const saved = (() => {
+    try { return localStorage.getItem(KEY); } catch { return null; }
+  })();
+  if (saved === "dark" || saved === "light") return saved;
+  // padrão: claro
+  return "light";
+}
+
 export function initThemeToggle() {
-  const key = "mc_theme";
+  // aplica tema salvo
+  setTheme(getTheme());
+
   const btn = document.getElementById("themeToggle");
+  if (!btn) return;
 
-  const saved = localStorage.getItem(key);
-  const prefersDark =
-    window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const initial = saved || (prefersDark ? "dark" : "light");
+  btn.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme") || "light";
+    setTheme(current === "dark" ? "light" : "dark");
+  });
+}
 
-  // Usa <html data-theme="..."> como fonte da verdade (CSS já usa html[data-theme])
-  document.documentElement.dataset.theme = initial;
-  // compatibilidade: alguns trechos podem ler do body
-  document.body.dataset.theme = initial;
+function updateThemeIcon(theme) {
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
 
-  const applyIcon = () => {
-    if (!btn) return;
-    const t = document.documentElement.dataset.theme || "light";
-    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
-    const icon = btn.querySelector("[data-icon]");
-    if (icon) icon.textContent = t === "dark" ? "☀️" : "🌙";
-  };
-
-  applyIcon();
-
-  if (btn) {
-    btn.addEventListener("click", () => {
-      const current = document.documentElement.dataset.theme || "light";
-      const next = current === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = next;
-      document.body.dataset.theme = next;
-      localStorage.setItem(key, next);
-      applyIcon();
-    });
-  }
+  // se você usa emoji/ícone dentro do botão:
+  // exemplo: <button id="themeToggle">🌙</button>
+  btn.textContent = theme === "dark" ? "☀️" : "🌙";
 }

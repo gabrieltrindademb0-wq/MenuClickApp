@@ -15,7 +15,7 @@
         <span class="mc-brand__name">MenuClick</span>
       </a>
 <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
-      <a class="ifoodIconBtn" href="./index.html" aria-label="Voltar">←</a>
+      <a class="ifoodIconBtn" href="./explore.html" aria-label="Voltar">←</a>
       <div class="ifoodTopbar__title">Seu pedido</div>
       <div style="width:40px"></div>
     </div>
@@ -47,7 +47,7 @@
   <script type="module">
     import { initThemeToggle } from "./js/theme.js";
     initThemeToggle();
-    document.getElementById("backBtn")?.addEventListener("click", ()=> history.length > 1 ? history.back() : (location.href="./index.html"));
+    document.getElementById("backBtn")?.addEventListener("click", ()=> history.length > 1 ? history.back() : (location.href="./explore.html"));
   </script>
   <script type="module" src="./js/order.js"></script>
   </div>

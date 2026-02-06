@@ -37,15 +37,51 @@
     </div>
 
     <div id="tab-menu" class="hidden">
-      <div class="card">
-        <h3 class="cardTitle">Adicionar Produto</h3>
-        <input class="input" id="prodName" placeholder="Nome (ex: X-Bacon)" style="margin-bottom:8px">
-        <input class="input" id="prodDesc" placeholder="Descrição" style="margin-bottom:8px">
-        <input class="input" type="number" id="prodPrice" placeholder="Preço (ex: 25.00)" style="margin-bottom:8px">
-        <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
+      <div class="grid" style="grid-template-columns: 1.2fr .8fr; gap:14px">
+        <div class="card">
+          <h3 class="cardTitle">Perfil da Loja</h3>
+          <p class="hint" style="margin-top:-6px">Essas informações aparecem para o cliente no app.</p>
+
+          <input class="input" id="store_name" placeholder="Nome da loja" style="margin-bottom:8px">
+          <input class="input" id="store_desc" placeholder="Descrição curta" style="margin-bottom:8px">
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <select class="input" id="store_segment">
+              <option value="restaurante">Restaurante</option>
+              <option value="mercado">Mercado</option>
+              <option value="sorveteria">Sorveteria</option>
+              <option value="farmacia">Farmácia</option>
+              <option value="bebidas">Bebidas</option>
+              <option value="petshop">Petshop</option>
+              <option value="outros">Outros</option>
+            </select>
+            <input class="input" id="store_cep" placeholder="CEP (00000-000)">
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_city" placeholder="Cidade">
+            <input class="input" id="store_cats" placeholder="Categorias (ex: Pizzas, Bebidas)">
+          </div>
+
+          <button class="btn btnAccent" id="btnSaveStore">Salvar alterações</button>
+          <span class="hint" id="storeSaveMsg" style="margin-left:10px"></span>
+        </div>
+
+        <div class="card">
+          <h3 class="cardTitle">Adicionar Produto</h3>
+          <input class="input" id="prodName" placeholder="Nome (ex: X-Bacon)" style="margin-bottom:8px">
+          <input class="input" id="prodDesc" placeholder="Descrição" style="margin-bottom:8px">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="prodCat" placeholder="Categoria (ex: Lanches)">
+            <input class="input" type="number" id="prodPrice" placeholder="Preço (ex: 25.00)" step="0.01">
+          </div>
+          <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
+          <p class="hint" style="margin-top:10px">Dica: clique em um produto para editar ou remover.</p>
+        </div>
       </div>
+
       <hr>
-      <h3>Seus Itens:</h3>
+      <h3>Seus Produtos:</h3>
       <div id="menuList" class="grid"></div>
     </div>
 

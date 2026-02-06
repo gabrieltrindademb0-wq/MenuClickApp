@@ -3,54 +3,246 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>MenuClick</title>
+  <title>MenuClick — Peça de onde estiver</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<body class="mc-app" class="ifood">
+
+<body class="mc-app">
   <div class="mc-shell">
-  <header class="ifoodTopbar">
-    <div class="container ifoodTopbar__inner">
-      <a class="mc-brand" href="./index.html" aria-label="MenuClick">
-        <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
-        <span class="mc-brand__name">MenuClick</span>
-      </a>
-<div style="display:flex;flex-direction:column;line-height:1.1">
-        <div style="font-weight:950">Entrega em</div>
-        <div style="opacity:.95;font-size:13px">Sua região</div>
+    <header class="mc-topnav">
+      <div class="container mc-topnav__inner">
+        <a class="mc-brand" href="./index.html" aria-label="MenuClick">
+          <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
+          <span class="mc-brand__name">MenuClick</span>
+        </a>
+
+        <nav class="mc-navlinks" aria-label="Navegação">
+          <a class="mc-link" href="#como-funciona">Como funciona</a>
+          <a class="mc-link" href="#vantagens">Vantagens</a>
+          <a class="mc-link" href="#avaliacoes">Avaliações</a>
+        </nav>
+
+        <div class="mc-topnav__actions">
+          <a class="mc-btn mc-btn--ghost" href="./signup.html">Criar conta</a>
+          <a class="mc-btn mc-btn--soft" href="./login.html">Entrar</a>
+          <a class="mc-btn" href="./lojista.html" aria-label="Área do lojista">Sou lojista</a>
+          <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
+        </div>
       </div>
-      <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
-        <button class="ifoodIconBtn" id="cartBtn" type="button" aria-label="Sacola">
-        🛍️<span style="margin-left:6px;font-weight:900" id="cartCount">0</span>
-      </button>
-    </div>
-  </header>
+    </header>
 
-  <div class="container ifoodPage">
-    <div class="ifoodSearch" style="margin-top:0">
-      <span class="ifoodSearch__icon">🔎</span>
-      <input id="searchInp" placeholder="Buscar restaurante" />
-    </div>
+    <!-- HERO -->
+    <section class="mc-hero">
+      <div class="container mc-hero__inner">
+        <div class="mc-hero__copy">
+          <div class="mc-chip">⚡ Rápido • Seguro • Simples</div>
+          <h1>Peça de restaurantes, mercados e muito mais — na sua cidade.</h1>
+          <p class="mc-lead">A <strong>MenuClick</strong> conecta clientes e estabelecimentos com uma experiência leve, moderna e fácil de usar.</p>
 
-    <h1 class="restName" style="margin-top:14px" id="pageTitle">Restaurantes</h1>
-    <div class="restMeta" id="pageHint">Escolha um restaurante para ver o cardápio.</div>
+          <div class="mc-cepbox" id="buscar">
+            <div class="mc-cepbox__title">Buscar estabelecimentos</div>
+            <div class="mc-cepbox__row">
+              <input class="mc-input" id="cepInp" inputmode="numeric" placeholder="Digite seu CEP (ex: 01001-000)" maxlength="9" />
+              <button class="mc-btn" id="btnBuscar">Buscar</button>
+            </div>
+            <div class="mc-cepbox__hint">Você escolhe a categoria e a gente lista as opções disponíveis.</div>
+          </div>
 
-    <div class="grid" id="restaurants"></div>
+          <div class="mc-cats" aria-label="Categorias">
+            <button class="mc-cat" data-segment="restaurante">
+              <span class="mc-cat__emoji">🍔</span>
+              <span class="mc-cat__label">Restaurantes</span>
+            </button>
+            <button class="mc-cat" data-segment="mercado">
+              <span class="mc-cat__emoji">🛒</span>
+              <span class="mc-cat__label">Mercados</span>
+            </button>
+            <button class="mc-cat" data-segment="sorveteria">
+              <span class="mc-cat__emoji">🍦</span>
+              <span class="mc-cat__label">Sorveterias</span>
+            </button>
+            <button class="mc-cat" data-segment="farmacia">
+              <span class="mc-cat__emoji">💊</span>
+              <span class="mc-cat__label">Farmácia</span>
+            </button>
+            <button class="mc-cat" data-segment="bebidas">
+              <span class="mc-cat__emoji">🥤</span>
+              <span class="mc-cat__label">Bebidas</span>
+            </button>
+            <button class="mc-cat" data-segment="petshop">
+              <span class="mc-cat__emoji">🐾</span>
+              <span class="mc-cat__label">Petshop</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CAROUSEL -->
+        <div class="mc-carousel" aria-label="Destaques">
+          <div class="mc-carousel__track" id="heroTrack">
+            <article class="mc-slide">
+              <div class="mc-slide__badge">Restaurantes</div>
+              <div class="mc-slide__title">Promoções e combos do dia</div>
+              <div class="mc-slide__sub">Descubra novidades perto de você.</div>
+            </article>
+            <article class="mc-slide">
+              <div class="mc-slide__badge">Mercados</div>
+              <div class="mc-slide__title">Compras rápidas no delivery</div>
+              <div class="mc-slide__sub">Itens essenciais sem sair de casa.</div>
+            </article>
+            <article class="mc-slide">
+              <div class="mc-slide__badge">Bebidas</div>
+              <div class="mc-slide__title">Geladas chegando em minutos</div>
+              <div class="mc-slide__sub">Praticidade para qualquer ocasião.</div>
+            </article>
+            <article class="mc-slide">
+              <div class="mc-slide__badge">Farmácia</div>
+              <div class="mc-slide__title">Cuidados do dia a dia</div>
+              <div class="mc-slide__sub">Encontre o que precisa com facilidade.</div>
+            </article>
+          </div>
+
+          <div class="mc-carousel__dots" id="heroDots" aria-label="Indicadores"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section class="mc-section" id="como-funciona">
+      <div class="container">
+        <div class="mc-section__head">
+          <h2>Como a MenuClick funciona</h2>
+          <p>Uma jornada simples: você escolhe, faz o pedido e acompanha — sem complicação.</p>
+        </div>
+
+        <div class="mc-steps">
+          <div class="mc-step mc-reveal">
+            <div class="mc-step__num">1</div>
+            <div>
+              <div class="mc-step__title">Informe seu CEP</div>
+              <div class="mc-step__text">A gente mostra os estabelecimentos disponíveis na sua região.</div>
+            </div>
+          </div>
+          <div class="mc-step mc-reveal">
+            <div class="mc-step__num">2</div>
+            <div>
+              <div class="mc-step__title">Escolha a categoria</div>
+              <div class="mc-step__text">Restaurante, mercado, bebidas, farmácia, petshop e mais.</div>
+            </div>
+          </div>
+          <div class="mc-step mc-reveal">
+            <div class="mc-step__num">3</div>
+            <div>
+              <div class="mc-step__title">Peça com poucos cliques</div>
+              <div class="mc-step__text">Carrinho, detalhes do pedido e envio rápido por WhatsApp/checkout.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VANTAGENS -->
+    <section class="mc-section" id="vantagens">
+      <div class="container">
+        <div class="mc-section__head">
+          <h2>Vantagens para você</h2>
+          <p>Uma experiência bonita e rápida — pensada para celular e desktop.</p>
+        </div>
+
+        <div class="mc-grid3">
+          <div class="mc-feature mc-reveal">
+            <div class="mc-feature__icon">🧠</div>
+            <div class="mc-feature__title">Busca inteligente</div>
+            <div class="mc-feature__text">Filtre por categoria e encontre rápido o que precisa.</div>
+          </div>
+          <div class="mc-feature mc-reveal">
+            <div class="mc-feature__icon">📦</div>
+            <div class="mc-feature__title">Carrinho organizado</div>
+            <div class="mc-feature__text">Total automático, ajuste de quantidade e finalização simples.</div>
+          </div>
+          <div class="mc-feature mc-reveal">
+            <div class="mc-feature__icon">🔒</div>
+            <div class="mc-feature__title">Conta e histórico</div>
+            <div class="mc-feature__text">Entre com sua conta para salvar preferências e pedidos.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AVALIAÇÕES -->
+    <section class="mc-section" id="avaliacoes">
+      <div class="container">
+        <div class="mc-section__head">
+          <h2>O que estão falando</h2>
+          <p>Avaliações reais (exemplo) para dar vida ao layout — você pode trocar depois.</p>
+        </div>
+
+        <div class="mc-reviews">
+          <article class="mc-review mc-reveal">
+            <div class="mc-review__top">
+              <div class="mc-review__name">Marina</div>
+              <div class="mc-review__stars">★★★★★</div>
+            </div>
+            <div class="mc-review__text">"Muito rápido e fácil de usar. Achei mercado e farmácia no mesmo lugar."</div>
+          </article>
+          <article class="mc-review mc-reveal">
+            <div class="mc-review__top">
+              <div class="mc-review__name">Lucas</div>
+              <div class="mc-review__stars">★★★★★</div>
+            </div>
+            <div class="mc-review__text">"Interface bem bonita, parece app de verdade. Pedi e deu tudo certo."</div>
+          </article>
+          <article class="mc-review mc-reveal">
+            <div class="mc-review__top">
+              <div class="mc-review__name">Camila</div>
+              <div class="mc-review__stars">★★★★☆</div>
+            </div>
+            <div class="mc-review__text">"Gostei do carrinho e do jeito de finalizar. Bem prático."</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mc-footer">
+      <div class="container mc-footer__inner">
+        <div class="mc-footer__col">
+          <a class="mc-brand" href="./index.html" aria-label="MenuClick">
+            <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
+            <span class="mc-brand__name">MenuClick</span>
+          </a>
+          <p class="mc-footer__muted">Delivery e catálogo digital para sua cidade. Experiência rápida, bonita e simples.</p>
+          <div class="mc-footer__mini">© <span id="year"></span> MenuClick • Todos os direitos reservados.</div>
+        </div>
+
+        <div class="mc-footer__col">
+          <div class="mc-footer__title">Atalhos</div>
+          <a class="mc-footer__link" href="#buscar">Buscar estabelecimentos</a>
+          <a class="mc-footer__link" href="#como-funciona">Como funciona</a>
+          <a class="mc-footer__link" href="./lojista.html">Sou lojista</a>
+        </div>
+
+        <div class="mc-footer__col">
+          <div class="mc-footer__title">Suporte</div>
+          <div class="mc-footer__muted">Horário: 08:00 – 21:00</div>
+          <div class="mc-footer__muted">Resposta rápida via WhatsApp</div>
+          <a class="mc-footer__pill" href="https://wa.me/5535997814774" target="_blank" rel="noreferrer">💬 Falar no WhatsApp</a>
+        </div>
+
+        <div class="mc-footer__col">
+          <div class="mc-footer__title">Segurança</div>
+          <div class="mc-footer__muted">• Dados protegidos</div>
+          <div class="mc-footer__muted">• Pagamento via app (quando disponível)</div>
+          <div class="mc-footer__muted">• Lojas verificadas</div>
+        </div>
+      </div>
+    </footer>
   </div>
 
   <script type="module">
     import { initThemeToggle } from "./js/theme.js";
+    import { initHome } from "./js/home.js";
     initThemeToggle();
-
-    // Atalho CTRL+K para focar busca
-    window.addEventListener("keydown", (e) => {
-      if ((e.ctrlKey || e.metaKey) && (e.key || "").toLowerCase() === "k") {
-        e.preventDefault();
-        document.getElementById("searchInp")?.focus();
-      }
-    });
+    initHome();
   </script>
-  <script type="module" src="./js/app.js"></script>
-  </div>
-  <div id="mcToast" class="mc-toast"></div>
 </body>
 </html>
