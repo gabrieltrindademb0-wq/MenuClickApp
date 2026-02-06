@@ -1,33 +1,68 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Delivery MVP</title>
+  <title>MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<body>
-  <div class="topbar">
-    <div class="container">
-      <div class="row">
-        <div class="brand">Delivery MVP</div>
-        <button class="btn" id="cartBtn"><span class="badge">Carrinho (</span><span id="cartCount">0</span><span class="badge">)</span></button>
+<body class="mc-app">
+  <header class="mc-header">
+    <div class="mc-header-inner">
+      <a class="mc-brand" href="./index.html" aria-label="MenuClick">
+        <img src="./assets/logo-menuclick.png" alt="Logo MenuClick"/>
+        <div style="min-width:0">
+          <strong>MenuClick</strong>
+          <div class="mc-subtitle">Seu cardápio digital</div>
+        </div>
+      </a>
+
+      <div class="mc-actions">
+        <button class="mc-iconbtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Ativar tema escuro">
+          <span data-icon>🌙</span>
+          <small>Tema</small>
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="container">
-    <h1 class="h1" id="pageTitle">Restaurantes</h1>
-    <p class="hint" id="pageHint">Escolha um restaurante para ver o cardápio.</p>
+    <div class="mc-search">
+      <div class="mc-searchbox" role="search">
+        <span aria-hidden="true">🔎</span>
+        <input id="searchInp" placeholder="Buscar restaurante..." autocomplete="off"/>
+        <span class="mc-kbd">CTRL K</span>
+      </div>
+    </div>
+  </header>
 
-    <input class="input" id="searchInp" placeholder="Buscar restaurante..." />
+  <main class="mc-container">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 2px 12px">
+      <div>
+        <div style="font-weight:1000;font-size:18px">Restaurantes</div>
+        <div class="mc-muted" style="font-size:12px;margin-top:4px">Escolha um restaurante para ver o cardápio.</div>
+      </div>
+      <div class="mc-badge" style="background:transparent;border:1px solid var(--border);">Online</div>
+    </div>
 
-    <div class="grid" id="restaurants"></div>
+    <div id="restaurants" class="mc-grid" aria-live="polite"></div>
 
-    <hr/>
-    <p class="hint">Teste: após finalizar um pedido, você vai para <b>order.html?order=ID</b>.</p>
-  </div>
+    <div id="emptyState" class="mc-card" style="display:none;padding:16px">
+      <div class="mc-title" style="margin:0 0 6px 0">Nada por aqui 😕</div>
+      <div class="mc-desc" style="min-height:auto">Não encontramos restaurantes com esse nome.</div>
+    </div>
+  </main>
 
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    initThemeToggle();
+
+    // Atalho CTRL+K para focar busca
+    window.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key || "").toLowerCase() === "k") {
+        e.preventDefault();
+        document.getElementById("searchInp")?.focus();
+      }
+    });
+  </script>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>

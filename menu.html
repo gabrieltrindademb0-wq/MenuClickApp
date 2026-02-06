@@ -1,34 +1,166 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Cardápio</title>
+  <title>Cardápio • MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<body>
-  <div class="topbar">
-    <div class="container">
-      <div class="row">
-        <div class="brand">Cardápio</div>
-        <a class="btn" href="./index.html">Voltar</a>
+<body class="mc-app">
+  <header class="mc-header">
+    <div class="mc-header-inner">
+      <button class="mc-back" type="button" id="backBtn">← Voltar</button>
+
+      <a class="mc-brand" href="./index.html" aria-label="MenuClick" style="margin:0 auto 0 6px">
+        <img src="./assets/logo-menuclick.png" alt="Logo MenuClick"/>
+        <div style="min-width:0">
+          <strong id="restName">Restaurante</strong>
+          <div class="mc-subtitle" id="restInfo">⭐ — • ⏱ — • 💰 —</div>
+        </div>
+      </a>
+
+      <div class="mc-actions">
+        <button class="mc-iconbtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Ativar tema escuro">
+          <span data-icon>🌙</span>
+          <small>Tema</small>
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="container">
-    <h1 class="h1" id="restName">Restaurante</h1>
-    <div class="grid" id="menuGrid">
+    <div class="mc-search">
+      <div class="mc-searchbox">
+        <span aria-hidden="true">🔎</span>
+        <input id="productSearch" placeholder="Buscar no cardápio..." autocomplete="off"/>
+        <span class="mc-kbd">/</span>
       </div>
 
-    <div class="payBox" style="margin-top:40px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3>Total: <span id="totalDisplay">R$ 0,00</span></h3>
-        <button class="btn btnAccent" id="finishBtn" disabled>Finalizar Pedido</button>
+      <div class="mc-chips" id="catChips" aria-label="Categorias"></div>
+    </div>
+  </header>
+
+  <main class="mc-container">
+    <div id="productList" class="mc-list"></div>
+
+    <div id="productsEmpty" class="mc-card" style="display:none;padding:16px">
+      <div class="mc-title" style="margin:0 0 6px 0">Nenhum produto encontrado</div>
+      <div class="mc-desc" style="min-height:auto">Tente buscar por outro nome ou selecione outra categoria.</div>
+    </div>
+  </main>
+
+  <!-- Bottom cart bar -->
+  <div class="mc-cartbar" id="cartBar" style="display:none">
+    <button type="button" id="openCartBtn">
+      <span>Ver sacola (<span id="cartCount">0</span>)</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </button>
+  </div>
+
+  <!-- Overlay + Cart sheet -->
+  <div class="mc-overlay" id="overlay"></div>
+
+  <section class="mc-sheet" id="cartSheet" aria-label="Sacola">
+    <div class="mc-sheet-head">
+      <div style="width:100%">
+        <div class="grab" aria-hidden="true"></div>
+        <div class="mc-row">
+          <div>
+            <div class="mc-sheet-title">Sua sacola</div>
+            <div class="mc-muted" style="font-size:12px;margin-top:2px" id="cartSub">—</div>
+          </div>
+          <button class="mc-close" type="button" id="closeCartBtn">✕</button>
+        </div>
       </div>
     </div>
-  </div>
 
+    <div class="mc-sheet-body">
+      <div id="cartItems"></div>
+
+      <div id="cartEmpty" class="mc-card" style="padding:16px;display:none">
+        <div class="mc-title" style="margin:0 0 6px 0">Sua sacola está vazia</div>
+        <div class="mc-desc" style="min-height:auto">Adicione itens para continuar.</div>
+      </div>
+
+      <div class="mc-divider"></div>
+
+      <div class="mc-row">
+        <div class="mc-muted">Subtotal</div>
+        <div style="font-weight:1000" id="subtotal">R$ 0,00</div>
+      </div>
+      <div class="mc-row" style="margin-top:6px">
+        <div class="mc-muted">Taxa</div>
+        <div style="font-weight:1000" id="fee">R$ 0,00</div>
+      </div>
+      <div class="mc-divider"></div>
+      <div class="mc-row">
+        <div style="font-weight:1000">Total</div>
+        <div style="font-weight:1000" id="total">R$ 0,00</div>
+      </div>
+    </div>
+
+    <div class="mc-sheet-foot">
+      <button class="mc-primary" id="finishBtn" type="button" disabled>Finalizar pedido</button>
+      <button class="mc-secondary" id="continueBtn" type="button">Continuar comprando</button>
+    </div>
+  </section>
+
+  <!-- Product sheet -->
+  <section class="mc-sheet" id="productSheet" aria-label="Produto">
+    <div class="mc-sheet-head">
+      <div style="width:100%">
+        <div class="grab" aria-hidden="true"></div>
+        <div class="mc-row">
+          <div>
+            <div class="mc-sheet-title" id="pName">Produto</div>
+            <div class="mc-muted" style="font-size:12px;margin-top:2px" id="pPrice">—</div>
+          </div>
+          <button class="mc-close" type="button" id="closeProductBtn">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mc-sheet-body">
+      <div class="mc-thumb" id="pThumb" style="width:100%;height:160px;border-radius:18px"></div>
+      <p class="mc-muted" id="pDesc" style="margin:12px 2px 0;line-height:1.45"></p>
+
+      <div style="margin-top:14px">
+        <div style="font-weight:1000;margin:0 0 8px 2px">Observações</div>
+        <textarea class="mc-textarea" id="pNotes" maxlength="140" placeholder="Ex.: sem cebola, maionese à parte..."></textarea>
+        <div class="mc-counter">
+          <span class="mc-muted">Opcional</span>
+          <span class="mc-muted"><span id="notesCount">0</span>/140</span>
+        </div>
+      </div>
+
+      <div style="margin-top:14px" class="mc-row">
+        <div style="font-weight:1000">Quantidade</div>
+        <div class="mc-qty">
+          <button type="button" id="pMinus">−</button>
+          <strong id="pQty">1</strong>
+          <button type="button" id="pPlus">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mc-sheet-foot">
+      <button class="mc-primary" id="pAddBtn" type="button">Adicionar à sacola</button>
+    </div>
+  </section>
+
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    initThemeToggle();
+
+    // Atalho "/" para focar busca do cardápio
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const tag = (document.activeElement?.tagName || "").toLowerCase();
+        if (tag !== "input" && tag !== "textarea") {
+          e.preventDefault();
+          document.getElementById("productSearch")?.focus();
+        }
+      }
+    });
+  </script>
   <script type="module" src="./js/menu.js"></script>
 </body>
 </html>

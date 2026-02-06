@@ -4,36 +4,86 @@ import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/
 
 const elRestaurants = document.getElementById("restaurants");
 const searchInp = document.getElementById("searchInp");
+const emptyState = document.getElementById("emptyState");
 
 const params = new URLSearchParams(location.search);
 const rParam = params.get("r"); // id do restaurante
 
 let restaurantsCache = [];
 
+function hashCode(str){
+  let h=0;
+  for (let i=0;i<str.length;i++) h = ((h<<5)-h) + str.charCodeAt(i) | 0;
+  return Math.abs(h);
+}
+
+function fakeMeta(id){
+  const h = hashCode(String(id));
+  const rating = (4.2 + (h % 8) * 0.1).toFixed(1); // 4.2 - 4.9
+  const min = 20 + (h % 20); // 20-39
+  const fee = (h % 2) ? 0 : (4.99 + (h % 7) * 0.5);
+  return { rating, min, fee };
+}
+
+function renderSkeleton(){
+  elRestaurants.innerHTML = "";
+  for (let i=0;i<6;i++){
+    const div = document.createElement("div");
+    div.className = "mc-card";
+    div.innerHTML = `
+      <div class="mc-banner mc-skel"></div>
+      <div class="mc-cardbody">
+        <div class="mc-skel" style="height:14px;width:70%;margin-bottom:10px"></div>
+        <div class="mc-skel" style="height:12px;width:95%;margin-bottom:6px"></div>
+        <div class="mc-skel" style="height:12px;width:78%;margin-bottom:12px"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="mc-skel" style="height:26px;width:74px;border-radius:999px"></div>
+          <div class="mc-skel" style="height:26px;width:74px;border-radius:999px"></div>
+          <div class="mc-skel" style="height:26px;width:74px;border-radius:999px"></div>
+        </div>
+      </div>
+    `;
+    elRestaurants.appendChild(div);
+  }
+}
+
 function renderRestaurants(list){
   elRestaurants.innerHTML = "";
+
+  if (!list.length){
+    emptyState.style.display = "block";
+    return;
+  }
+  emptyState.style.display = "none";
+
   list.forEach(r=>{
+    const meta = fakeMeta(r.id);
     const div = document.createElement("div");
-    div.className = "card";
+    div.className = "mc-card";
     div.innerHTML = `
-      <div class="cardTitle">${escapeHtml(r.name || "Restaurante")}</div>
-      <p class="cardSub">${escapeHtml(r.description || "Clique para abrir")}</p>
-      <hr/>
-      <button class="btn btnAccent">Abrir</button>
-      <p class="cardSub" style="margin-top:10px">Link: <code>/?r=${r.id}</code></p>
+      <div class="mc-banner"></div>
+      <div class="mc-cardbody">
+        <p class="mc-title">${escapeHtml(r.name || "Restaurante")}</p>
+        <p class="mc-desc">${escapeHtml(r.description || "Clique para abrir o cardápio.")}</p>
+        <div class="mc-meta">
+          <span class="mc-badge">⭐ ${meta.rating}</span>
+          <span class="mc-badge">⏱ ${meta.min}–${meta.min+10} min</span>
+          <span class="mc-badge">${meta.fee === 0 ? "Entrega grátis" : `Taxa R$ ${meta.fee.toFixed(2)}`}</span>
+        </div>
+      </div>
     `;
-    div.querySelector("button").onclick = ()=> openRestaurant(r);
+    div.addEventListener("click", ()=> openRestaurant(r));
     elRestaurants.appendChild(div);
   });
 }
 
 function openRestaurant(r){
-  // Navigate to menu
-  window.location.href = `menu.html?r=${r.id}`;
+  window.location.href = `menu.html?r=${encodeURIComponent(r.id)}`;
 }
 
 async function loadRestaurants(){
-  elRestaurants.innerHTML = `<p class="hint">Carregando...</p>`;
+  renderSkeleton();
+
   const snap = await getDocs(collection(db, "restaurants"));
   const list = snap.docs.map(d=>({ id:d.id, ...d.data() }));
   restaurantsCache = list;

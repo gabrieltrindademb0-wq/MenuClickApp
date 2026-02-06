@@ -1,41 +1,62 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Seu pedido</title>
+  <title>Seu pedido • MenuClick</title>
   <link rel="stylesheet" href="./css/styles.css"/>
 </head>
-<body>
-  <div class="topbar">
-    <div class="container">
-      <div class="row">
-        <div class="brand">Delivery MVP</div>
-        <a class="btn" href="./index.html">Voltar</a>
+<body class="mc-app">
+  <header class="mc-header">
+    <div class="mc-header-inner">
+      <button class="mc-back" type="button" id="backBtn">← Voltar</button>
+
+      <a class="mc-brand" href="./index.html" aria-label="MenuClick" style="margin:0 auto 0 6px">
+        <img src="./assets/logo-menuclick.png" alt="Logo MenuClick"/>
+        <div style="min-width:0">
+          <strong>MenuClick</strong>
+          <div class="mc-subtitle">Acompanhe seu pedido</div>
+        </div>
+      </a>
+
+      <div class="mc-actions">
+        <button class="mc-iconbtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Ativar tema escuro">
+          <span data-icon>🌙</span>
+          <small>Tema</small>
+        </button>
       </div>
     </div>
-  </div>
+  </header>
 
-  <div class="container" style="max-width:900px">
-    <div class="card">
-      <h1 class="h1" style="margin-top:0">Seu pedido</h1>
+  <main class="mc-container" style="padding-bottom:24px">
+    <div class="mc-card" style="cursor:default">
+      <div class="mc-title" style="font-size:18px;margin:0">Seu pedido</div>
+      <div class="mc-muted" style="margin-top:6px;font-size:12px">Código: <span id="orderId">(carregando)</span></div>
 
-      <p class="hint">Código: <span id="orderId">(carregando)</span></p>
+      <div class="mc-divider"></div>
 
-      <div style="margin-top:10px">
-        <div style="font-weight:800;font-size:18px">Status: <span id="status">—</span></div>
-        <p class="hint" id="updated">—</p>
+      <div class="mc-row">
+        <div style="font-weight:1000">Status</div>
+        <div class="mc-badge" id="status">—</div>
       </div>
+      <div class="mc-muted" id="updated" style="margin-top:8px;font-size:12px">—</div>
 
-      <div class="payBox" id="payBox">
-        <h2 style="margin:0 0 8px 0">Pagamento</h2>
-        <p class="hint" id="payHint">Carregando...</p>
+      <div class="mc-divider"></div>
 
-        <button class="btn btnAccent hidden" id="payBtn">Pagar agora</button>
+      <div class="mc-card" style="padding:14px;cursor:default">
+        <div class="mc-title" style="margin:0 0 6px 0">Pagamento</div>
+        <div class="mc-muted" id="payHint" style="font-size:12px">Carregando...</div>
+
+        <button class="mc-primary hidden" id="payBtn" type="button" style="margin-top:12px">Pagar agora</button>
       </div>
     </div>
-  </div>
+  </main>
 
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    initThemeToggle();
+    document.getElementById("backBtn")?.addEventListener("click", ()=> history.length > 1 ? history.back() : (location.href="./index.html"));
+  </script>
   <script type="module" src="./js/order.js"></script>
 </body>
 </html>
