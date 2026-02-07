@@ -145,18 +145,52 @@ export function checkLoginStatus(isProtected = false) {
 
     if (user) {
       // Carrega dados do usuário
-      let role = "customer";
-      let ownerStatus = "approved";
+let role = "customer";
+let ownerStatus = "approved";
 
-      try {
-        const snap = await getDoc(doc(db, "users", user.uid));
-        const data = snap.exists() ? snap.data() : {};
-        role = data.role || "customer";
+try {
+  const snap = await getDoc(doc(db, "users", user.uid));
+  const data = snap.exists() ? snap.data() : {};
+  role = data.role || "customer";
 
-        ownerStatus = data.ownerStatus || (role === "owner" ? "approved" : "approved");
-      } catch (e) {
-        console.error(e);
+  // Para lojistas, a fonte de verdade é a loja em "restaurants"
+  if (role === "owner") {
+    try {
+      // 1) tenta achar por ownerId
+      let rq = query(collection(db, "restaurants"), where("ownerId", "==", user.uid), limit(1));
+      let rs = await getDocs(rq);
+
+      // 2) fallback por ownerEmail (caso ownerId esteja diferente)
+      if (rs.empty && user.email) {
+        const email = String(user.email).toLowerCase();
+        rq = query(collection(db, "restaurants"), where("ownerEmail", "==", email), limit(1));
+        rs = await getDocs(rq);
       }
+
+      if (!rs.empty) {
+        const docSnap = rs.docs[0];
+        const r = docSnap.data() || {};
+
+        // Se achou por e-mail e o ownerId não bate, corrige automaticamente
+        if (r.ownerId !== user.uid) {
+          await setDoc(docSnap.ref, { ownerId: user.uid }, { merge: true });
+        }
+
+        const approved = (r.approvalStatus === "approved") && (r.isActive === true);
+        ownerStatus = approved ? "approved" : "pending";
+      } else {
+        ownerStatus = "pending";
+      }
+    } catch (e2) {
+      console.error(e2);
+      ownerStatus = data.ownerStatus || "pending";
+    }
+  } else {
+    ownerStatus = "approved";
+  }
+} catch (e) {
+  console.error(e);
+}
 
       // Bloqueia acesso ao painel se ainda estiver em análise
       if ((path.includes("admin-dashboard") || path.includes("admin.html")) && role === "owner" && ownerStatus !== "approved") {
