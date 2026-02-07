@@ -69,7 +69,11 @@
   <script type="module">
     import { loginUser, checkLoginStatus, resetPassword, isValidEmail, isValidPhoneBR, isLikelyEmail, logoutTo } from "./js/auth.js";
     import { db } from "./js/firebase.js";
+<<<<<<< HEAD
     import { doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+=======
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+>>>>>>> 8ee44a8102a50acf158227eb3876dcab5067988f
     import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
     import { initThemeToggle } from "./js/theme.js";
 
@@ -112,6 +116,7 @@
 
       try{
         await loginUser(identifier, pass);
+<<<<<<< HEAD
         // Redirecionamento explícito + verificação de aprovação pela loja (restaurants)
         const uid = auth.currentUser?.uid;
         if(!uid) throw new Error("NO_UID");
@@ -136,6 +141,23 @@
         const r = rs.docs[0].data() || {};
         const approved = (r.approvalStatus === "approved") && (r.isActive === true);
         window.location.href = approved ? "admin-dashboard.html" : "analise.html";
+=======
+        // Redirecionamento explícito (evita cair na área do cliente por engano)
+        try{
+          const uid = auth.currentUser?.uid;
+          if(!uid) throw new Error("NO_UID");
+          const snap = await getDoc(doc(db, "users", uid));
+          const data = snap.exists() ? snap.data() : {};
+          if(data.role !== "owner"){
+            await logoutTo("login-lojista.html");
+            return alert("Essa conta é de cliente. Entre pela área de cliente.");
+          }
+          window.location.href = "admin-dashboard.html";
+        }catch(e2){
+          console.error(e2);
+          // fallback: deixa o checkLoginStatus decidir
+        }
+>>>>>>> 8ee44a8102a50acf158227eb3876dcab5067988f
       }catch(e){
         console.error(e);
         alert("Erro ao entrar. Verifique seus dados.");

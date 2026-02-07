@@ -147,35 +147,13 @@ export function checkLoginStatus(isProtected = false) {
       // Carrega dados do usuário
       let role = "customer";
       let ownerStatus = "approved";
-      let ownerApprovedByStore = null; // boolean | null
+
       try {
         const snap = await getDoc(doc(db, "users", user.uid));
         const data = snap.exists() ? snap.data() : {};
         role = data.role || "customer";
 
-        // Para lojistas, a fonte de verdade é a loja em restaurants (approvalStatus + isActive)
-        // Isso evita depender de um campo duplicado em users/{uid}.
-        if (role === "owner") {
-          try {
-            const q = query(collection(db, "restaurants"), where("ownerId", "==", user.uid), limit(1));
-            const rs = await getDocs(q);
-            if (!rs.empty) {
-              const r = rs.docs[0].data() || {};
-              ownerApprovedByStore = (r.approvalStatus === "approved") && (r.isActive === true);
-              ownerStatus = ownerApprovedByStore ? "approved" : "pending";
-            } else {
-              // Sem loja vinculada ainda
-              ownerApprovedByStore = false;
-              ownerStatus = "pending";
-            }
-          } catch (e2) {
-            console.error(e2);
-            // fallback: mantém o status do user, se existir
-            ownerStatus = data.ownerStatus || "pending";
-          }
-        } else {
-          ownerStatus = data.ownerStatus || "approved";
-        }
+        ownerStatus = data.ownerStatus || (role === "owner" ? "approved" : "approved");
       } catch (e) {
         console.error(e);
       }
@@ -200,6 +178,7 @@ export function checkLoginStatus(isProtected = false) {
         if (role === "owner") {
           window.location.href = ownerStatus === "approved" ? "admin-dashboard.html" : "analise.html";
         } else {
+          
           window.location.href = "explore.html";
         }
       }
