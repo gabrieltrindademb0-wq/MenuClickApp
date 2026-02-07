@@ -12,7 +12,7 @@
     <header class="mc-topnav">
       <div class="container mc-topnav__inner">
         <a class="mc-brand" href="./index.html" aria-label="MenuClick">
-          <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
+          <img class="mc-brand__logo" src="./assets/logo-menuclick.png" data-logo-dark="./assets/logo-menuclick.png" data-logo-light="./assets/logo-menuclick-light.png" alt="MenuClick"/>
           <span class="mc-brand__name">MenuClick</span>
         </a>
 
@@ -39,69 +39,56 @@
           <h1>Peça de restaurantes, mercados e muito mais — na sua cidade.</h1>
           <p class="mc-lead">A <strong>MenuClick</strong> conecta clientes e estabelecimentos com uma experiência leve, moderna e fácil de usar.</p>
 
-          <div class="mc-cepbox" id="buscar">
-            <div class="mc-cepbox__title">Buscar estabelecimentos</div>
-            <div class="mc-cepbox__row">
-              <input class="mc-input" id="cepInp" inputmode="numeric" placeholder="Digite seu CEP (ex: 01001-000)" maxlength="9" />
-              <button class="mc-btn" id="btnBuscar">Buscar</button>
-            </div>
-            <div class="mc-cepbox__hint">Você escolhe a categoria e a gente lista as opções disponíveis.</div>
-          </div>
+          
+          
 
-          <div class="mc-cats" aria-label="Categorias">
-            <button class="mc-cat" data-segment="restaurante">
-              <span class="mc-cat__emoji">🍔</span>
-              <span class="mc-cat__label">Restaurantes</span>
-            </button>
-            <button class="mc-cat" data-segment="mercado">
-              <span class="mc-cat__emoji">🛒</span>
-              <span class="mc-cat__label">Mercados</span>
-            </button>
-            <button class="mc-cat" data-segment="sorveteria">
-              <span class="mc-cat__emoji">🍦</span>
-              <span class="mc-cat__label">Sorveterias</span>
-            </button>
-            <button class="mc-cat" data-segment="farmacia">
-              <span class="mc-cat__emoji">💊</span>
-              <span class="mc-cat__label">Farmácia</span>
-            </button>
-            <button class="mc-cat" data-segment="bebidas">
-              <span class="mc-cat__emoji">🥤</span>
-              <span class="mc-cat__label">Bebidas</span>
-            </button>
-            <button class="mc-cat" data-segment="petshop">
-              <span class="mc-cat__emoji">🐾</span>
-              <span class="mc-cat__label">Petshop</span>
-            </button>
-          </div>
         </div>
 
         <!-- CAROUSEL -->
         <div class="mc-carousel" aria-label="Destaques">
           <div class="mc-carousel__track" id="heroTrack">
-            <article class="mc-slide">
-              <div class="mc-slide__badge">Restaurantes</div>
+            <article class="mc-slide mc-slide--left">
+              <img class="mc-slide__img" src="./assets/banners/restaurante.svg" alt=""/>
+              <div class="mc-slide__overlay"></div>
+              <div class="mc-slide__content">
+                <div class="mc-slide__badge">Restaurantes</div>
               <div class="mc-slide__title">Promoções e combos do dia</div>
               <div class="mc-slide__sub">Descubra novidades perto de você.</div>
+              </div>
             </article>
             <article class="mc-slide">
-              <div class="mc-slide__badge">Mercados</div>
+              <img class="mc-slide__img" src="./assets/banners/mercado.svg" alt=""/>
+              <div class="mc-slide__overlay"></div>
+              <div class="mc-slide__content">
+                <div class="mc-slide__badge">Mercados</div>
               <div class="mc-slide__title">Compras rápidas no delivery</div>
               <div class="mc-slide__sub">Itens essenciais sem sair de casa.</div>
+              </div>
             </article>
             <article class="mc-slide">
-              <div class="mc-slide__badge">Bebidas</div>
+              <img class="mc-slide__img" src="./assets/banners/bebidas.svg" alt=""/>
+              <div class="mc-slide__overlay"></div>
+              <div class="mc-slide__content">
+                <div class="mc-slide__badge">Bebidas</div>
               <div class="mc-slide__title">Geladas chegando em minutos</div>
               <div class="mc-slide__sub">Praticidade para qualquer ocasião.</div>
+              </div>
             </article>
             <article class="mc-slide">
-              <div class="mc-slide__badge">Farmácia</div>
+              <img class="mc-slide__img" src="./assets/banners/farmacia.svg" alt=""/>
+              <div class="mc-slide__overlay"></div>
+              <div class="mc-slide__content">
+                <div class="mc-slide__badge">Farmácia</div>
               <div class="mc-slide__title">Cuidados do dia a dia</div>
               <div class="mc-slide__sub">Encontre o que precisa com facilidade.</div>
+              </div>
             </article>
           </div>
 
           <div class="mc-carousel__dots" id="heroDots" aria-label="Indicadores"></div>
+          
+
+
         </div>
       </div>
     </section>
@@ -207,7 +194,7 @@
       <div class="container mc-footer__inner">
         <div class="mc-footer__col">
           <a class="mc-brand" href="./index.html" aria-label="MenuClick">
-            <img class="mc-brand__logo" src="./assets/logo-menuclick.png" alt="MenuClick"/>
+            <img class="mc-brand__logo" src="./assets/logo-menuclick.png" data-logo-dark="./assets/logo-menuclick.png" data-logo-light="./assets/logo-menuclick-light.png" alt="MenuClick"/>
             <span class="mc-brand__name">MenuClick</span>
           </a>
           <p class="mc-footer__muted">Delivery e catálogo digital para sua cidade. Experiência rápida, bonita e simples.</p>
@@ -216,7 +203,6 @@
 
         <div class="mc-footer__col">
           <div class="mc-footer__title">Atalhos</div>
-          <a class="mc-footer__link" href="#buscar">Buscar estabelecimentos</a>
           <a class="mc-footer__link" href="#como-funciona">Como funciona</a>
           <a class="mc-footer__link" href="./lojista.html">Sou lojista</a>
         </div>

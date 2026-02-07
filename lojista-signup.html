@@ -139,13 +139,11 @@
 
   <script type="module">
     import { createOwnerAndStore } from "./js/owner.js";
-    import { checkLoginStatus, isValidEmail, isValidPhoneBR } from "./js/auth.js";
+    import { logoutTo, isValidEmail, isValidPhoneBR } from "./js/auth.js";
     import { initThemeToggle } from "./js/theme.js";
 
     
     initThemeToggle();
-checkLoginStatus(false);
-
     const btn = document.getElementById("btnCreate");
     const val = (id) => (document.getElementById(id).value || "").trim();
     const digits = (v) => String(v||"").replace(/\D/g,"");
@@ -193,7 +191,7 @@ checkLoginStatus(false);
           ...form,
           password: form.password
         });
-        // redirect pelo checkLoginStatus
+        await logoutTo("analise.html?pending=1");
       }catch(e){
         console.error(e);
         alert("Erro ao criar conta: " + (e?.message || "tente novamente"));
