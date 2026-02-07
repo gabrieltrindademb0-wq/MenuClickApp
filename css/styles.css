@@ -614,6 +614,103 @@ html[data-theme="dark"] .mc-skel{
 }
 .mc-toast.show{ display:block; }
 
+/* ================================
+   ADMIN DASHBOARD (Parceiro)
+   ================================ */
+
+.ad-wrap{max-width:1100px;margin:0 auto;padding:22px 14px 90px}
+
+.ad-top{
+  position:sticky;top:0;z-index:40;
+  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  border:1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow: var(--shadow);
+}
+
+.ad-brand{display:flex;gap:12px;align-items:center}
+.ad-brand__dot{
+  width:38px;height:38px;border-radius:14px;
+  background: radial-gradient(circle at 30% 30%, #ffb48a, var(--mc-orange));
+  box-shadow: 0 12px 26px rgba(226,93,27,.28);
+}
+.ad-brand__title{font-weight:900;letter-spacing:.2px}
+.ad-brand__sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+.ad-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);
+  padding:10px 14px;border-radius:12px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  box-shadow: var(--shadow);
+}
+.ad-btn--ghost{background:transparent;box-shadow:none}
+.ad-btn--soft{background: color-mix(in srgb, var(--mc-orange) 12%, var(--surface));border-color: color-mix(in srgb, var(--mc-orange) 30%, var(--border))}
+.ad-btn--primary{background: var(--mc-orange);border-color: transparent;color:#fff;box-shadow: 0 16px 34px rgba(226,93,27,.25)}
+.ad-btn:hover{transform: translateY(-1px)}
+
+.ad-main{margin-top:14px}
+
+.ad-hero{
+  border:1px solid var(--border);
+  border-radius: 22px;
+  padding: 18px;
+  background:
+    radial-gradient(800px 400px at 20% 10%, rgba(226,93,27,.18), transparent 60%),
+    radial-gradient(700px 380px at 90% 0%, rgba(110,168,255,.16), transparent 60%),
+    var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.ad-hero__head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.ad-h1{margin:0;font-size:34px;letter-spacing:-.4px}
+.ad-h2{margin:0;font-size:18px}
+.ad-h3{margin:0;font-size:16px}
+.ad-muted{color:var(--muted);font-size:13px}
+
+.ad-pill{display:inline-flex;align-items:center;gap:8px;margin-top:8px;
+  font-size:12px;padding:7px 10px;border-radius:999px;
+  background: color-mix(in srgb, var(--mc-orange) 10%, var(--chip));
+  border: 1px solid color-mix(in srgb, var(--mc-orange) 20%, var(--border));
+}
+
+.ad-quick{display:flex;gap:10px;flex-wrap:wrap}
+
+.ad-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.ad-stat{border:1px solid var(--border);border-radius:18px;padding:14px;background:var(--surface-2)}
+.ad-stat__k{font-size:28px;font-weight:900}
+.ad-stat__l{color:var(--muted);font-size:12px;margin-top:2px}
+
+.ad-tabs{display:flex;gap:10px;margin:16px 0 8px}
+.ad-tab{border:1px solid var(--border);background:var(--surface);color:var(--muted);
+  padding:10px 14px;border-radius:999px;cursor:pointer}
+.ad-tab.active{background: var(--mc-orange);border-color: transparent;color:#fff}
+
+.ad-section{margin-top:10px}
+.ad-section__head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:8px 0 10px}
+
+.ad-orders{display:grid;gap:10px}
+.orderCard{background: var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow: var(--shadow)}
+
+.ad-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px}
+.ad-card{background: var(--surface);border:1px solid var(--border);border-radius:22px;padding:16px;box-shadow: var(--shadow)}
+.ad-card__head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
+
+.ad-form{display:grid;gap:10px}
+.ad-field span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.ad-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ad-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+.ad-products{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+@media (max-width: 920px){
+  .ad-stats{grid-template-columns:1fr}
+  .ad-grid{grid-template-columns:1fr}
+  .ad-products{grid-template-columns:1fr}
+  .ad-h1{font-size:28px}
+}
+
 /* ===== HERO MAIS LIMPO E BANNER MAIOR ===== */
 
 .mc-hero__inner{
