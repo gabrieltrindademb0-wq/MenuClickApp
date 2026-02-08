@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Entrar (Parceiro) - MenuClick</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <link rel="stylesheet" href="./css/auth.css"/>
+</head>
+<body class="auth">
+  <div class="authWrap">
+    <div class="authCard">
+      <section class="authHero">
+        <div class="brandRow">
+          <div class="logoDot">🏪</div>
+          <strong>MenuClick</strong><span class="badge">Parceiro</span>
+        </div>
+        <h2>Bem-vindo de volta</h2>
+        <p>Entre para gerenciar sua loja, produtos e pedidos.</p>
+        <ul>
+          <li>Use <b>e-mail</b> ou <b>WhatsApp</b> para entrar</li>
+          <li>Recuperação de senha em 1 clique</li>
+          <li>Se sua loja estiver em <b>análise</b>, você verá o status aqui</li>
+        </ul>
+
+        <div style="margin-top:14px; padding:12px; border-radius:14px; border:1px solid var(--border); background: rgba(226,93,27,.08)">
+          <b>Como funciona a aprovação</b>
+          <div style="color:var(--muted); margin-top:6px; line-height:1.5">
+            Após o cadastro, analisamos os dados (até <b>24h</b>). Quando aprovado, você recebe aviso no <b>e-mail</b> e <b>WhatsApp</b> cadastrados.
+          </div>
+        </div>
+      </section>
+
+      <section class="authPanel">
+        <div class="topRow">
+          <div>
+            <h1>Entrar</h1>
+            <p class="sub">Acesse sua conta de parceiro.</p>
+          </div>
+          <button class="btnIcon" id="themeToggle" title="Tema" aria-label="Tema" type="button" data-icon>🌙</button>
+        </div>
+
+        <div class="formGrid one">
+          <div class="field">
+            <label>E-mail ou WhatsApp</label>
+            <input class="input" id="identifier" placeholder="seu@email.com ou (DD) 9xxxx-xxxx" autocomplete="username"/>
+          </div>
+
+          <div class="field">
+            <label>Senha</label>
+            <input class="input" id="password" type="password" placeholder="Sua senha" autocomplete="current-password"/>
+          </div>
+
+          <div class="rowBetween">
+            <button class="linkBtn" id="btnForgot" type="button">Esqueceu a senha?</button>
+            <a href="lojista-signup.html" style="text-decoration:underline; font-weight:650">Cadastrar loja</a>
+          </div>
+
+          <button class="btn btnAccent" id="btnLogin" type="button" style="width:100%; margin-top:10px">Entrar</button>
+        </div>
+
+        <p class="smallNote">
+          É cliente? <a href="login-cliente.html">Entrar como cliente</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script type="module">
+import { loginUser, checkLoginStatus, resetPassword, isValidEmail, isValidPhoneBR, isLikelyEmail, logoutTo } from "./js/auth.js";
+import { db } from "./js/firebase.js";
+import { doc, getDoc, collection, query, where, getDocs, limit, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { initThemeToggle } from "./js/theme.js";
+
+initThemeToggle();
+checkLoginStatus(false);
+
+const auth = getAuth();
+const val = (v) => (v || "").trim();
+
+async function redirectOwnerAfterLogin(user){
+  // 1) Confere se é conta de lojista
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+  const userData = userSnap.exists() ? (userSnap.data() || {}) : {};
+  if(userData.role !== "owner"){
+    await logoutTo("login-lojista.html");
+    alert("Essa conta é de cliente. Entre pela área de cliente.");
+    return;
+  }
+
+  // 2) Fonte de verdade: restaurants.approvalStatus + restaurants.isActive
+  let rq = query(collection(db, "restaurants"), where("ownerId", "==", user.uid), limit(1));
+  let rs = await getDocs(rq);
+
+  // fallback por e-mail (caso ownerId esteja diferente)
+  if(rs.empty && user.email){
+    const email = String(user.email).toLowerCase();
+    rq = query(collection(db, "restaurants"), where("ownerEmail", "==", email), limit(1));
+    rs = await getDocs(rq);
+  }
+
+  if(rs.empty){
+    window.location.href = "analise.html";
+    return;
+  }
+
+  const docSnap = rs.docs[0];
+  const r = docSnap.data() || {};
+
+  // Se achou por e-mail e o ownerId não bate, corrige automaticamente
+  if(r.ownerId !== user.uid){
+    await setDoc(docSnap.ref, { ownerId: user.uid }, { merge: true });
+  }
+
+  const approved = (r.approvalStatus === "approved") && (r.isActive === true);
+  window.location.href = approved ? "admin-dashboard.html" : "analise.html";
+}
+
+// Recuperação (somente e-mail)
+document.getElementById("btnForgot").onclick = async () => {
+  const id = val(document.getElementById("identifier").value).toLowerCase();
+  if(!id) return alert("Digite seu e-mail no campo acima para recuperar a senha.");
+  if(!isLikelyEmail(id)) return alert("Para recuperar a senha, informe seu e-mail (não WhatsApp).");
+  if(!isValidEmail(id)) return alert("E-mail inválido.");
+
+  try{
+    await resetPassword(id);
+    alert("Enviamos um e-mail de recuperação. Verifique sua caixa de entrada e spam.");
+  }catch(e){
+    console.error(e);
+    alert("Não foi possível enviar o e-mail de recuperação.");
+  }
+};
+
+// Login
+document.getElementById("btnLogin").onclick = async () => {
+  const identifier = val(document.getElementById("identifier").value);
+  const pass = document.getElementById("password").value || "";
+
+  if(!identifier) return alert("Digite seu e-mail ou WhatsApp.");
+
+  if(isLikelyEmail(identifier)){
+    if(!isValidEmail(identifier)) return alert("E-mail inválido.");
+  } else {
+    if(!isValidPhoneBR(identifier)) return alert("WhatsApp inválido. Use DDD + número.");
+  }
+
+  if(pass.length < 6) return alert("Senha inválida.");
+
+  try{
+    const cred = await loginUser(identifier, pass);
+    await redirectOwnerAfterLogin(cred.user);
+  }catch(e){
+    console.error(e);
+    alert("Erro ao entrar. Verifique seus dados.");
+  }
+};
+  </script>
+</body>
+</html>

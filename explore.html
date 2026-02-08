@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>MenuClick — Explorar</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+</head>
+
+<body class="mc-app">
+  <div class="mc-shell">
+    <header class="ifoodTopbar">
+      <div class="container ifoodTopbar__inner">
+        <a class="mc-brand" href="./index.html" aria-label="MenuClick">
+          <img class="mc-brand__logo" src="./assets/logo-menuclick.png" data-logo-dark="./assets/logo-menuclick.png" data-logo-light="./assets/logo-menuclick-light.png" alt="MenuClick"/>
+          <span class="mc-brand__name">MenuClick</span>
+        </a>
+
+        <div style="display:flex;flex-direction:column;line-height:1.1" aria-live="polite">
+          <div style="font-weight:950">Entrega em</div>
+          <div style="opacity:.95;font-size:13px" id="deliveryLine">Sua região</div>
+        </div>
+
+        <a class="ifoodIconBtn ifoodIconBtn--ghost" href="./index.html" aria-label="Início">🏠</a>
+        <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
+        <button class="ifoodIconBtn" id="cartBtn" type="button" aria-label="Sacola">🛍️<span style="margin-left:6px;font-weight:900" id="cartCount">0</span></button>
+      </div>
+    </header>
+
+    <div class="container ifoodPage">
+      <div class="mc-filters">
+        <div class="ifoodSearch" style="margin-top:0">
+          <span class="ifoodSearch__icon">🔎</span>
+          <input id="searchInp" placeholder="Buscar estabelecimento" />
+        </div>
+
+        <div class="mc-pillrow" id="segmentPills" aria-label="Filtro de categoria"></div>
+      </div>
+
+      <h1 class="restName" style="margin-top:14px" id="pageTitle">Estabelecimentos</h1>
+      <div class="restMeta" id="pageHint">Escolha um estabelecimento para ver o cardápio.</div>
+
+      <div class="grid" id="restaurants"></div>
+    </div>
+
+    <script type="module">
+      import { initThemeToggle } from "./js/theme.js";
+      initThemeToggle();
+
+      // Atalho CTRL+K para focar busca
+      window.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && (e.key || "").toLowerCase() === "k") {
+          e.preventDefault();
+          document.getElementById("searchInp")?.focus();
+        }
+      });
+    </script>
+    <script type="module" src="./js/app.js"></script>
+  </div>
+
+  <div id="mcToast" class="mc-toast"></div>
+</body>
+</html>

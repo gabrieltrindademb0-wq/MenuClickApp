@@ -1,11 +1,14 @@
 // js/app.js
 import { db } from "./firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { initThemeToggle } from "./theme.js";
+
+initThemeToggle();
 
 const elRestaurants = document.getElementById("restaurants");
 const searchInp = document.getElementById("searchInp");
 
-// Empty state (cria se não existir no HTML)
+// Empty state
 let emptyState = document.getElementById("emptyState");
 if (!emptyState) {
   emptyState = document.createElement("div");
@@ -16,13 +19,12 @@ if (!emptyState) {
     <div class="emptyState__title">Nada por aqui</div>
     <div>Cadastre um restaurante no painel Admin para aparecer aqui.</div>
   `;
-  // coloca antes da lista de restaurantes se possível
   (elRestaurants?.parentElement || document.querySelector(".mc-container") || document.body)
     .insertBefore?.(emptyState, elRestaurants || null);
 }
 
 const params = new URLSearchParams(location.search);
-const rParam = params.get("r"); // id do restaurante
+const rParam = params.get("r");
 
 let restaurantsCache = [];
 
@@ -34,8 +36,8 @@ function hashCode(str){
 
 function fakeMeta(id){
   const h = hashCode(String(id));
-  const rating = (4.2 + (h % 8) * 0.1).toFixed(1); // 4.2 - 4.9
-  const min = 20 + (h % 20); // 20-39
+  const rating = (4.2 + (h % 8) * 0.1).toFixed(1);
+  const min = 20 + (h % 20);
   const fee = (h % 2) ? 0 : (4.99 + (h % 7) * 0.5);
   return { rating, min, fee };
 }
@@ -108,7 +110,6 @@ async function loadRestaurants(){
     const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     restaurantsCache = list;
 
-    // se tiver ?r=ID abre direto
     if (rParam){
       const found = list.find(x => x.id === rParam);
       if (found){
@@ -122,7 +123,6 @@ async function loadRestaurants(){
   } catch (err) {
     console.error("Falha ao carregar restaurantes:", err);
 
-    // fallback demo (não quebra o app)
     const demo = [
       { id: "demo-1", name: "MenuClick Demo", description: "Configure o Firebase para listar seus restaurantes." },
       { id: "demo-2", name: "Restaurante Exemplo", description: "Clique para abrir o cardápio (demo)." }
