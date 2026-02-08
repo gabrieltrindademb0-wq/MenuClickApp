@@ -797,3 +797,11 @@ html[data-theme="dark"] .mc-skel{
 .mc-productCard{cursor:default}
 #menuList.grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
 
+/* ====== TAMANHO DA LOGO NO PAINEL ====== */
+
+.mc-topbar__brand img,
+.mc-brand__logo {
+  height: 56px;      /* ajuste aqui */
+  width: auto;
+  object-fit: contain;
+}
