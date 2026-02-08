@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Em análise - MenuClick Parceiro</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <link rel="stylesheet" href="./css/auth.css"/>
+</head>
+<body class="auth">
+  <div class="authWrap">
+    <div class="authCard">
+      <section class="authHero">
+        <div class="brandRow">
+          <div class="logoDot">🕵️</div>
+          <strong>MenuClick</strong><span class="badge">Análise</span>
+        </div>
+        <h2>Sua loja está em análise ✅</h2>
+        <p>
+          Pra manter o app seguro e com qualidade, fazemos uma checagem rápida antes de liberar o painel.
+        </p>
+        <ul>
+          <li><b>Prazo:</b> até 24h</li>
+          <li><b>Você recebe:</b> confirmação por <b>e-mail</b> e <b>WhatsApp</b></li>
+          <li><b>Depois:</b> acesse em <b>Já sou parceiro</b> e comece a vender</li>
+        </ul>
+      </section>
+
+      <section class="authPanel">
+        <div class="topRow">
+          <div>
+            <h1>Status da aprovação</h1>
+            <p class="sub">Acompanhe o que acontece nas próximas horas.</p>
+          </div>
+          <button class="btnIcon" id="themeToggle" title="Tema" aria-label="Tema" type="button" data-icon>🌙</button>
+        </div>
+
+        <div style="display:grid; gap:10px">
+          <div class="mc-step" style="box-shadow:none">
+            <div class="mc-step__num">1</div>
+            <div>
+              <div class="mc-step__title">Verificação básica</div>
+              <div class="mc-step__text">Checamos os dados (CNPJ, contato e endereço) para evitar fraudes.</div>
+            </div>
+          </div>
+
+          <div class="mc-step" style="box-shadow:none">
+            <div class="mc-step__num">2</div>
+            <div>
+              <div class="mc-step__title">Validação de operação</div>
+              <div class="mc-step__text">Confirmamos segmento e categorias para seu perfil ficar bem ranqueado na busca.</div>
+            </div>
+          </div>
+
+          <div class="mc-step" style="box-shadow:none">
+            <div class="mc-step__num">3</div>
+            <div>
+              <div class="mc-step__title">Liberação do painel</div>
+              <div class="mc-step__text">Após aprovado, você entra e consegue editar loja, produtos e receber pedidos.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; padding:12px; border:1px solid var(--border); border-radius:14px; background:var(--surface-2)">
+          <div style="font-weight:900">⏳ Previsão: até <span id="eta">24h</span></div>
+          <div style="color:var(--muted); margin-top:6px">Se precisar acelerar, fale com o suporte e envie o CNPJ.</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
+            <a class="mc-btn" href="./login-lojista.html">Já sou parceiro</a>
+            <a class="mc-btn mc-btn--soft" href="https://wa.me/5535997814774" target="_blank" rel="noreferrer">💬 Falar com suporte</a>
+            <a class="mc-btn mc-btn--ghost" href="./index.html">Voltar ao início</a>
+          </div>
+        </div>
+
+        <p class="smallNote" style="margin-top:12px">
+          Dica: quando aprovado, entre em <a href="login-lojista.html">Já sou parceiro</a> e você será levado direto ao painel.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    initThemeToggle();
+
+    // pequeno aviso ao chegar aqui após cadastro
+    const p = new URLSearchParams(location.search);
+    if(p.get('pending') === '1'){
+      // alerta simples sem travar a tela
+      console.log('Cadastro recebido. Em análise.');
+    }
+  </script>
+</body>
+</html>

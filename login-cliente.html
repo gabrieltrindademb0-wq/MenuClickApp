@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Entrar - MenuClick</title>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <link rel="stylesheet" href="./css/auth.css"/>
+</head>
+<body class="auth">
+  <div class="authWrap">
+    <div class="authCard">
+      <section class="authHero">
+        <div class="brandRow">
+          <div class="logoDot">🍟</div>
+          <strong>MenuClick</strong><span class="badge">Cliente</span>
+        </div>
+        <h2>Bem-vindo de volta</h2>
+        <p>Entre para salvar seus dados, agilizar pedidos e acompanhar novidades na sua cidade.</p>
+        <ul>
+          <li>Use <b>e-mail</b> ou <b>WhatsApp</b> para entrar</li>
+          <li>Recuperação de senha em 1 clique</li>
+          <li>Também dá pra entrar com <b>Google</b></li>
+        </ul>
+      </section>
+
+      <section class="authPanel">
+        <div class="topRow">
+          <div>
+            <h1>Entrar</h1>
+            <p class="sub">Acesse sua conta.</p>
+          </div>
+          <button class="btnIcon" id="themeToggle" type="button" title="Tema" aria-label="Tema"><span data-icon>🌙</span></button>
+        </div>
+
+        <div class="formGrid one">
+          <div class="field">
+            <label>E-mail ou WhatsApp</label>
+            <input class="input" id="identifier" placeholder="seu@email.com ou (DD) 9xxxx-xxxx" autocomplete="username"/>
+          </div>
+
+          <div class="field">
+            <label>Senha</label>
+            <input class="input" id="password" type="password" placeholder="Sua senha" autocomplete="current-password"/>
+          </div>
+
+          <div class="rowBetween">
+            <button class="linkBtn" id="btnForgot" type="button">Esqueceu a senha?</button>
+            <a href="signup.html" style="text-decoration:underline; font-weight:650">Criar conta</a>
+          </div>
+
+          <button class="btn btnAccent" id="btnLogin" type="button" style="width:100%; margin-top:10px">Entrar</button>
+
+          <div class="divider">ou</div>
+          <button class="btnGoogle" id="btnGoogle" type="button">
+            <span class="gIcon">G</span>
+            Continuar com Google
+          </button>
+        </div>
+
+        <p class="smallNote">
+          É lojista? <a href="login-lojista.html">Acessar área do parceiro</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loginUser, checkLoginStatus, resetPassword, isValidEmail, isValidPhoneBR, isLikelyEmail, loginWithGoogleCustomer } from "./js/auth.js";
+    import { initThemeToggle } from "./js/theme.js";
+
+    initThemeToggle();
+    checkLoginStatus(false);
+
+    const params = new URLSearchParams(location.search);
+    if (params.get("created") === "1") {
+      // feedback simples
+      setTimeout(() => alert("Conta criada! Agora faça login para acessar o app."), 200);
+    }
+
+    const val = (v) => (v || "").trim();
+
+    document.getElementById("btnForgot").onclick = async () => {
+      const id = val(document.getElementById("identifier").value).toLowerCase();
+      if(!id){
+        alert("Digite seu e-mail no campo acima para recuperar a senha.");
+        return;
+      }
+      if(!isLikelyEmail(id)){
+        alert("Para recuperar a senha, informe seu e-mail (não WhatsApp).");
+        return;
+      }
+      if(!isValidEmail(id)){
+        alert("E-mail inválido.");
+        return;
+      }
+      try{
+        await resetPassword(id);
+        alert("Enviamos um e-mail de recuperação. Verifique sua caixa de entrada e spam.");
+      }catch(e){
+        console.error(e);
+        alert("Não foi possível enviar o e-mail de recuperação.");
+      }
+    };
+
+    document.getElementById("btnGoogle").onclick = async () => {
+      try{
+        await loginWithGoogleCustomer();
+        // redireciona pelo checkLoginStatus
+      }catch(e){
+        console.error(e);
+        alert("Não foi possível entrar com Google. Verifique se o provedor Google está ativado no Firebase Auth.");
+      }
+    };
+
+    document.getElementById("btnLogin").onclick = async () => {
+      const identifier = val(document.getElementById("identifier").value);
+      const pass = document.getElementById("password").value || "";
+
+      if(!identifier){ alert("Digite seu e-mail ou WhatsApp."); return; }
+      if(isLikelyEmail(identifier)){
+        if(!isValidEmail(identifier)) { alert("E-mail inválido."); return; }
+      }else{
+        if(!isValidPhoneBR(identifier)) { alert("WhatsApp inválido. Use DDD + número."); return; }
+      }
+      if(pass.length < 6){ alert("Senha inválida."); return; }
+
+      try{
+        await loginUser(identifier, pass);
+        // redireciona pelo checkLoginStatus
+      }catch(e){
+        console.error(e);
+        alert("Erro ao entrar. Verifique seus dados.");
+      }
+    };
+  </script>
+</body>
+</html>
