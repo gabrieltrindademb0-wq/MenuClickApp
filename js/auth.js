@@ -87,7 +87,7 @@ export async function registerUser(email, password, userData) {
       ...(userData.extra || {})
     });
 
-    return user;
+    return userCredential;
   } catch (error) {
     console.error("Erro no registro:", error);
     throw error;
@@ -135,7 +135,7 @@ export async function loginWithGoogleCustomer(){
       createdAt: Date.now()
     });
   }
-  return user;
+  return userCredential;
 }
 
 // Verificar se está logado e redirecionar
