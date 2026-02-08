@@ -1,217 +1,277 @@
 <!doctype html>
-<html lang="pt-br" data-theme="light">
+<html lang="pt-br" data-theme="dark">
 <head>
+  
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>MenuClick — Painel do Parceiro</title>
+  <title>Gestão - Restaurante</title>
   <link rel="stylesheet" href="./css/styles.css"/>
+  <!-- Estilos do painel ficam no styles.css (admin) -->
 </head>
-<body class="mc-app">
-  <div class="mc-shell">
+<body>
+  <div class="topbar">
+    <div class="container">
+      <div class="row" style="align-items:center; justify-content:space-between;">
+  <div class="brand" style="display:flex; align-items:center; gap:10px;">
+    <img id="storeLogoTop" src="./assets/logo-menuclick.png" alt="Logo da loja" style="width:34px;height:34px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:rgba(255,255,255,.06)"/>
+    <div>
+      <div style="font-weight:900">Painel do Parceiro</div>
+      <div class="hint" style="margin:0">Gerencie pedidos, produtos e sua vitrine</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
+    <button class="btn" id="btnLogout">Sair</button>
+  </div>
+</div>
+    </div>
+  </div>
 
-    <header class="ad-top">
-      <div class="container ad-top__inner">
-        <div class="ad-brand">
-          <div class="ad-brand__logoWrap">
-            <img id="storeLogoImg" class="ad-brand__logo" src="./assets/logo-menuclick.png" alt="Logo da loja"/>
+  <div class="container">
+    <h1 class="h1" id="restName">Carregando restaurante...</h1>
+
+    <div class="tabs">
+      <button class="tabBtn active" onclick="showTab('orders')">Pedidos em Aberto</button>
+      <button class="tabBtn" onclick="showTab('menu')">Meu Cardápio</button>
+    </div>
+
+    <div id="tab-orders">
+      <p class="hint">Pedidos chegando em tempo real...</p>
+      <div id="ordersList"></div>
+    </div>
+
+    <div id="tab-menu" class="hidden">
+      <div class="grid" style="grid-template-columns: 1.2fr .8fr; gap:14px">
+        <div class="card">
+          <h3 class="cardTitle">Perfil da Loja</h3>
+          <p class="hint" style="margin-top:-6px">Essas informações aparecem para o cliente no app.</p>
+
+          <input class="input" id="store_name" placeholder="Nome da loja" style="margin-bottom:8px">
+          <input class="input" id="store_desc" placeholder="Descrição curta" style="margin-bottom:8px">
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <select class="input" id="store_segment">
+              <option value="restaurante">Restaurante</option>
+              <option value="mercado">Mercado</option>
+              <option value="sorveteria">Sorveteria</option>
+              <option value="farmacia">Farmácia</option>
+              <option value="bebidas">Bebidas</option>
+              <option value="petshop">Petshop</option>
+              <option value="outros">Outros</option>
+            </select>
+            <input class="input" id="store_cnpj" placeholder="CNPJ (opcional)">
           </div>
+
+          <div class="hint" style="margin:6px 0 8px">Logo da loja</div>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px">
+            <input class="input" type="file" id="store_logo" accept="image/*">
+            <img id="storeLogoPreview" src="" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--border)"/>
+          </div>
+
+          <div class="hint" style="margin:6px 0 8px">Endereço completo</div>
+          <div style="display:grid; grid-template-columns: 1.3fr .7fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_rua" placeholder="Rua / Av.">
+            <input class="input" id="store_numero" placeholder="Número">
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_bairro" placeholder="Bairro">
+            <input class="input" id="store_complemento" placeholder="Complemento (opcional)">
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_city" placeholder="Cidade">
+            <input class="input" id="store_cep" placeholder="CEP (00000-000)">
+          </div>
+
+          <input class="input" id="store_cats" placeholder="Categorias (ex: Pizzas, Bebidas)" style="margin-bottom:8px">
+
+          <button class="btn btnAccent" id="btnSaveStore">Salvar alterações</button>
+          <span class="hint" id="storeSaveMsg" style="margin-left:10px"></span>
+        </div>
+
+        <div class="card">
+          <h3 class="cardTitle">Adicionar Produto</h3>
+          <input class="input" id="prodName" placeholder="Nome (ex: X-Bacon)" style="margin-bottom:8px">
+          <input class="input" id="prodDesc" placeholder="Descrição" style="margin-bottom:8px">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="prodCat" placeholder="Categoria (ex: Lanches)">
+            <input class="input" type="number" id="prodPrice" placeholder="Preço (ex: 25.00)" step="0.01">
+          </div>
+          <div class="hint" style="margin:6px 0 8px">Foto do produto</div>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px">
+            <input class="input" type="file" id="prodImage" accept="image/*">
+            <img id="prodImagePreview" src="" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--border)"/>
+          </div>
+          <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
+          <p class="hint" style="margin-top:10px">Dica: clique em um produto para editar ou remover.</p>
+  <div class="ad-wrap">
+    <header class="ad-top">
+      <div class="ad-top__left">
+        <div class="ad-brand">
+          <div class="ad-brand__dot"></div>
           <div>
             <div class="ad-brand__title">Painel do Parceiro</div>
             <div class="ad-brand__sub">Gerencie pedidos, produtos e sua vitrine</div>
           </div>
         </div>
-
-        <div class="ad-actions">
-          <button class="mc-btn mc-btn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
-          <button class="mc-btn mc-btn--soft" id="btnLogout" type="button">Sair</button>
-        </div>
+      </div>
+      <div class="ad-top__right">
+        <button class="ad-btn ad-btn--ghost" id="btnLogout">Sair</button>
       </div>
     </header>
 
-    <main class="container ad-main">
+    <main class="ad-main">
       <section class="ad-hero">
-        <div class="ad-hero__left">
-          <h1 id="restName" class="ad-storeName">Carregando loja...</h1>
-          <div class="ad-status"><span class="ad-dot"></span> Status: <strong id="storeStatus">Ativo</strong></div>
-        </div>
-        <div class="ad-hero__right">
-          <button class="mc-btn mc-btn--ghost" type="button" onclick="document.getElementById('tabOrders').click()">Ver pedidos</button>
-          <button class="mc-btn" type="button" onclick="document.getElementById('tabMenu').click()">Editar cardápio</button>
+        <div class="ad-hero__head">
+          <div>
+            <h1 class="ad-h1" id="restName">Carregando loja...</h1>
+            <div class="ad-pill">✅ Status: Ativo</div>
+          </div>
+          <div class="ad-quick">
+            <a class="ad-btn ad-btn--soft" href="#" onclick="showTab('orders'); return false;">Ver pedidos</a>
+            <a class="ad-btn ad-btn--primary" href="#" onclick="showTab('menu'); return false;">Editar cardápio</a>
+          </div>
         </div>
 
-        <div class="ad-metrics">
-          <div class="ad-metric">
-            <div class="ad-metric__num" id="mOrders">0</div>
-            <div class="ad-metric__label">Pedidos em aberto</div>
+        <div class="ad-stats">
+          <div class="ad-stat">
+            <div class="ad-stat__k" id="statOpen">0</div>
+            <div class="ad-stat__l">Pedidos em aberto</div>
           </div>
-          <div class="ad-metric">
-            <div class="ad-metric__num" id="mProducts">0</div>
-            <div class="ad-metric__label">Produtos cadastrados</div>
+          <div class="ad-stat">
+            <div class="ad-stat__k" id="statProducts">0</div>
+            <div class="ad-stat__l">Produtos cadastrados</div>
           </div>
-          <div class="ad-metric">
-            <div class="ad-metric__num">24h</div>
-            <div class="ad-metric__label">Tempo de resposta</div>
+          <div class="ad-stat">
+            <div class="ad-stat__k">24h</div>
+            <div class="ad-stat__l">Tempo de resposta</div>
           </div>
         </div>
       </section>
 
-      <div class="ad-tabs">
-        <button class="ad-tab active" id="tabOrders" type="button" data-tab="orders">Pedidos</button>
-        <button class="ad-tab" id="tabMenu" type="button" data-tab="menu">Cardápio</button>
-      </div>
+      <nav class="ad-tabs" aria-label="Abas do painel">
+        <button class="ad-tab active" onclick="showTab('orders')">Pedidos</button>
+        <button class="ad-tab" onclick="showTab('menu')">Cardápio</button>
+      </nav>
 
-      <section class="ad-panel" id="panelOrders">
-        <div class="ad-panel__head">
-          <h2>Pedidos em tempo real</h2>
-          <p>Chegam automaticamente conforme o cliente finaliza.</p>
+      <section id="tab-orders" class="ad-section">
+        <div class="ad-section__head">
+          <h2 class="ad-h2">Pedidos em tempo real</h2>
+          <div class="ad-muted">Chegam automaticamente conforme o cliente finaliza.</div>
         </div>
-        <div id="ordersList" class="ad-ordersEmpty">Aguardando pedidos...</div>
+        <div id="ordersList" class="ad-orders"></div>
       </section>
 
-      <section class="ad-panel hidden" id="panelMenu">
-        <div class="ad-grid2">
-
+      <section id="tab-menu" class="ad-section hidden">
+        <div class="ad-grid">
           <div class="ad-card">
             <div class="ad-card__head">
-              <h2>Perfil da Loja</h2>
-              <p>Aparece para o cliente no app.</p>
+              <h3 class="ad-h3">Perfil da Loja</h3>
+              <div class="ad-muted">Aparece para o cliente no app</div>
             </div>
 
             <div class="ad-form">
-              <div class="ad-row2">
-                <label class="ad-field">
-                  <span>Nome da loja</span>
-                  <input id="storeName" type="text" placeholder="Ex: Drogaria São Pedro"/>
-                </label>
-                <label class="ad-field">
-                  <span>Descrição</span>
-                  <input id="storeDesc" type="text" placeholder="Descrição curta"/>
-                </label>
-              </div>
+              <label class="ad-field">
+                <span>Nome da loja</span>
+                <input class="input" id="store_name" placeholder="Nome da loja">
+              </label>
+              <label class="ad-field">
+                <span>Descrição</span>
+                <input class="input" id="store_desc" placeholder="Descrição curta">
+              </label>
 
-              <div class="ad-row2">
+              <div class="ad-row">
                 <label class="ad-field">
                   <span>Segmento</span>
-                  <select id="storeSegment">
+                  <select class="input" id="store_segment">
                     <option value="restaurante">Restaurante</option>
                     <option value="mercado">Mercado</option>
+                    <option value="sorveteria">Sorveteria</option>
                     <option value="farmacia">Farmácia</option>
                     <option value="bebidas">Bebidas</option>
                     <option value="petshop">Petshop</option>
+                    <option value="outros">Outros</option>
                   </select>
                 </label>
                 <label class="ad-field">
-                  <span>CNPJ (opcional)</span>
-                  <input id="storeCnpj" type="text" placeholder="00.000.000/0000-00"/>
+                  <span>CEP</span>
+                  <input class="input" id="store_cep" placeholder="CEP (00000-000)">
                 </label>
               </div>
 
-              <label class="ad-field">
-                <span>Logo da loja</span>
-                <input id="storeLogoFile" type="file" accept="image/*"/>
-                <small>PNG/JPG. Recomendado: 512x512.</small>
-              </label>
-
-              <div class="ad-divider"></div>
-
-              <h3 class="ad-subtitle">Endereço completo</h3>
-
-              <div class="ad-row2">
-                <label class="ad-field">
-                  <span>Rua / Av.</span>
-                  <input id="addrStreet" type="text" placeholder="Rua / Av."/>
-                </label>
-                <label class="ad-field">
-                  <span>Número</span>
-                  <input id="addrNumber" type="text" placeholder="Nº"/>
-                </label>
-              </div>
-
-              <div class="ad-row2">
-                <label class="ad-field">
-                  <span>Bairro</span>
-                  <input id="addrNeighborhood" type="text" placeholder="Bairro"/>
-                </label>
-                <label class="ad-field">
-                  <span>Complemento (opcional)</span>
-                  <input id="addrComplement" type="text" placeholder="Complemento"/>
-                </label>
-              </div>
-
-              <div class="ad-row2">
+              <div class="ad-row">
                 <label class="ad-field">
                   <span>Cidade</span>
-                  <input id="addrCity" type="text" placeholder="Cidade"/>
+                  <input class="input" id="store_city" placeholder="Cidade">
                 </label>
                 <label class="ad-field">
-                  <span>CEP</span>
-                  <input id="addrCep" type="text" placeholder="00000-000"/>
+                  <span>Categorias</span>
+                  <input class="input" id="store_cats" placeholder="Categorias (ex: Pizzas, Bebidas)">
                 </label>
               </div>
 
-              <label class="ad-field">
-                <span>Categorias</span>
-                <input id="storeCats" type="text" placeholder="Ex: Pizzas, Bebidas, Lanches"/>
-              </label>
-
-              <button id="btnSaveProfile" class="mc-btn" type="button">Salvar alterações</button>
+              <div class="ad-actions">
+                <button class="btn btnAccent" id="btnSaveStore">Salvar alterações</button>
+                <span class="ad-muted" id="storeSaveMsg"></span>
+              </div>
             </div>
           </div>
 
           <div class="ad-card">
             <div class="ad-card__head">
-              <h2>Adicionar Produto</h2>
-              <p>Clique em um produto abaixo para editar/remover (em breve).</p>
+              <h3 class="ad-h3">Adicionar Produto</h3>
+              <div class="ad-muted">Clique em um produto abaixo para editar/remover</div>
             </div>
 
             <div class="ad-form">
-              <div class="ad-row2">
+              <label class="ad-field">
+                <span>Nome</span>
+                <input class="input" id="prodName" placeholder="Ex: X-Bacon">
+              </label>
+              <label class="ad-field">
+                <span>Descrição</span>
+                <input class="input" id="prodDesc" placeholder="Ex: Pão, hambúrguer, queijo...">
+              </label>
+
+              <div class="ad-row">
                 <label class="ad-field">
-                  <span>Nome</span>
-                  <input id="prodName" type="text" placeholder="Ex: X-Bacon"/>
+                  <span>Categoria</span>
+                  <input class="input" id="prodCat" placeholder="Ex: Lanches">
                 </label>
                 <label class="ad-field">
                   <span>Preço</span>
-                  <input id="prodPrice" type="number" step="0.01" placeholder="Ex: 25.00"/>
+                  <input class="input" type="number" id="prodPrice" placeholder="Ex: 25.00" step="0.01">
                 </label>
               </div>
 
-              <label class="ad-field">
-                <span>Descrição</span>
-                <input id="prodDesc" type="text" placeholder="Ex: Pão, hambúrguer, queijo..."/>
-              </label>
-
-              <label class="ad-field">
-                <span>Categoria</span>
-                <input id="prodCategory" type="text" placeholder="Ex: Lanches"/>
-              </label>
-
-              <label class="ad-field">
-                <span>Foto do produto</span>
-                <input id="prodPhotoFile" type="file" accept="image/*"/>
-                <small>PNG/JPG. Recomendado: 1200x800.</small>
-              </label>
-
-              <button class="mc-btn" id="btnAddProd" type="button">Salvar Produto</button>
+              <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
             </div>
+          </div>
+        </div>
 
-            <div class="ad-divider"></div>
-
-            <h3 class="ad-subtitle">Seus produtos</h3>
-            <div id="menuList" class="ad-products"></div>
+        <div class="ad-section" style="margin-top:18px">
+          <div class="ad-section__head">
+            <h2 class="ad-h2">Seus produtos</h2>
             <div class="ad-muted">Organize sua vitrine para vender mais</div>
           </div>
-
+          <div id="menuList" class="ad-products"></div>
         </div>
       </section>
 
     </main>
   </div>
 
-  <script type="module">
-    import { initThemeToggle } from "./js/theme.js";
-    initThemeToggle();
+  <script>
+    function showTab(tab) {
+      document.getElementById('tab-orders').classList.toggle('hidden', tab !== 'orders');
+      document.getElementById('tab-menu').classList.toggle('hidden', tab !== 'menu');
+      document.querySelectorAll('.ad-tab').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
   </script>
+  <script type="module">
+  import { initThemeToggle } from "./js/theme.js";
+  initThemeToggle();
+</script>
   <script type="module" src="./js/admin-dashboard.js"></script>
 </body>
 </html>

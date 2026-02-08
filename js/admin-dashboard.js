@@ -1,12 +1,10 @@
 // js/admin-dashboard.js
 import { db, storage } from "./firebase.js";
-import { logout, checkLoginStatus } from "./auth.js";
-import {
-  collection, query, where, getDocs, addDoc, onSnapshot, updateDoc, doc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import {
-  ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+import { logoutTo, checkLoginStatus } from "./auth.js";
+import { collection, query, where, getDocs, addDoc, onSnapshot, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 const auth = getAuth();
@@ -15,9 +13,45 @@ const auth = getAuth();
 const elRestName = document.getElementById("restName");
 const elOrders = document.getElementById("ordersList");
 const elMenuList = document.getElementById("menuList");
+
+
+// Store profile form
+const stName = document.getElementById('store_name');
+const stDesc = document.getElementById('store_desc');
+const stSeg = document.getElementById('store_segment');
+const stCep = document.getElementById('store_cep');
+const stCity = document.getElementById('store_city');
+const stRua = document.getElementById('store_rua');
+const stNumero = document.getElementById('store_numero');
+const stBairro = document.getElementById('store_bairro');
+const stCompl = document.getElementById('store_complemento');
+const stCnpj = document.getElementById('store_cnpj');
+const stLogo = document.getElementById('store_logo');
+const stLogoPreview = document.getElementById('storeLogoPreview');
+const stLogoTop = document.getElementById('storeLogoTop');
+
+const stCats = document.getElementById('store_cats');
+const btnSaveStore = document.getElementById('btnSaveStore');
+const storeSaveMsg = document.getElementById('storeSaveMsg');
+
+function previewFile(inputEl, imgEl){
+  const f = inputEl?.files?.[0];
+  if(!f || !imgEl) return;
+  const url = URL.createObjectURL(f);
+  imgEl.src = url;
+  imgEl.style.display = "block";
+}
+
+stLogo?.addEventListener("change", ()=> previewFile(stLogo, stLogoPreview));
+inpImg?.addEventListener("change", ()=> previewFile(inpImg, inpImgPreview));
+
+// Form products
 const inpName = document.getElementById("prodName");
 const inpDesc = document.getElementById("prodDesc");
 const inpPrice = document.getElementById("prodPrice");
+const inpImg = document.getElementById("prodImage");
+const inpImgPreview = document.getElementById("prodImagePreview");
+const inpCat = document.getElementById("prodCat");
 const btnAdd = document.getElementById("btnAddProd");
 
 const btnLogout = document.getElementById("btnLogout");
@@ -58,15 +92,26 @@ const btnSaveProfile = document.getElementById("btnSaveProfile");
 let myRestaurantId = null;
 let myRestaurantDoc = null;
 
-// 1) Protege rota
-checkLoginStatus(true);
 
-// Tabs
-function setTab(which){
-  const isOrders = which === "orders";
-  if (tabOrders && tabMenu){
-    tabOrders.classList.toggle("active", isOrders);
-    tabMenu.classList.toggle("active", !isOrders);
+async function uploadImage(file, path){
+  const safeName = (file.name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const fullPath = `${path}/${Date.now()}_${safeName}`;
+  const r = sRef(storage, fullPath);
+  await uploadBytes(r, file);
+  return await getDownloadURL(r);
+}
+
+let myRestaurantRef = null;
+
+// 1. Verifica login
+checkLoginStatus(true); // true = manda pro login se não tiver logado
+
+document.getElementById("btnLogout").onclick = () => logoutTo("login-lojista.html");
+
+// 2. Inicializa Dashboard
+auth.onAuthStateChanged async (user) => {
+  if (user) {
+    await loadMyRestaurant(user.uid);
   }
   if (panelOrders && panelMenu){
     panelOrders.classList.toggle("hidden", !isOrders);
@@ -92,9 +137,21 @@ async function loadMyRestaurant(user){
     return;
   }
 
-  myRestaurantDoc = snap.docs[0];
-  myRestaurantId = myRestaurantDoc.id;
-  const data = myRestaurantDoc.data() || {};
+
+  const restData = snap.docs[0];
+  myRestaurantId = restData.id;
+  myRestaurantRef = restData.ref;
+  const r = restData.data();
+  elRestName.textContent = r.name || "Minha loja";
+
+  // Preenche formulário do perfil
+  if (stName) stName.value = r.name || "";
+  if (stDesc) stDesc.value = r.description || "";
+  if (stSeg) stSeg.value = (r.segment || "restaurante");
+  if (stCep) stCep.value = r.cep || "";
+  if (stCity) stCity.value = r.city || "";
+  if (stCats) stCats.value = Array.isArray(r.categories) ? r.categories.join(", ") : (r.categories || "");
+
 
   // Header
   elRestName.textContent = data.name || "Minha loja";
@@ -126,60 +183,41 @@ async function loadMyRestaurant(user){
   listenMenu();
 }
 
-async function uploadImage(file, path){
-  const safeName = (file.name || "img").replace(/[^a-z0-9._-]/gi, "_");
-  const fileRef = ref(storage, `${path}/${Date.now()}_${safeName}`);
-  await uploadBytes(fileRef, file);
-  return await getDownloadURL(fileRef);
+
+function cleanCsv(str){
+  return String(str || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+    .slice(0, 30);
 }
 
-if (btnSaveProfile){
-  btnSaveProfile.onclick = async () => {
-    if (!myRestaurantId) return;
+btnSaveStore?.addEventListener('click', async () => {
+  if (!myRestaurantRef) return;
+  storeSaveMsg.textContent = '';
+  try {
+    btnSaveStore.disabled = true;
+    await updateDoc(myRestaurantRef, {
+      name: stName?.value?.trim() || "",
+      description: stDesc?.value?.trim() || "",
+      segment: stSeg?.value || "restaurante",
+      cep: stCep?.value?.trim() || "",
+      city: stCity?.value?.trim() || "",
+      categories: cleanCsv(stCats?.value),
+      updatedAt: Date.now()
+    });
+    storeSaveMsg.textContent = 'Salvo!';
+    setTimeout(() => storeSaveMsg.textContent = '', 2000);
+  } catch (e) {
+    console.error(e);
+    storeSaveMsg.textContent = 'Erro ao salvar';
+  } finally {
+    btnSaveStore.disabled = false;
+  }
+});
 
-    btnSaveProfile.disabled = true;
-    try{
-      let logoUrl = null;
-
-      if (storeLogoFile && storeLogoFile.files && storeLogoFile.files[0]){
-        logoUrl = await uploadImage(storeLogoFile.files[0], `restaurants/${myRestaurantId}/logo`);
-      }
-
-      const payload = {
-        name: storeName?.value?.trim() || "",
-        description: storeDesc?.value?.trim() || "",
-        segment: storeSegment?.value || "restaurante",
-        cnpj: storeCnpj?.value?.trim() || "",
-        categoriesNorm: storeCats?.value?.trim() || "",
-        address: {
-          street: addrStreet?.value?.trim() || "",
-          number: addrNumber?.value?.trim() || "",
-          neighborhood: addrNeighborhood?.value?.trim() || "",
-          complement: addrComplement?.value?.trim() || "",
-          city: addrCity?.value?.trim() || "",
-          cep: addrCep?.value?.trim() || ""
-        }
-      };
-
-      if (logoUrl) payload.logoUrl = logoUrl;
-
-      await updateDoc(doc(db, "restaurants", myRestaurantId), payload);
-
-      if (logoUrl && storeLogoImg) storeLogoImg.src = logoUrl;
-      if (payload.name) elRestName.textContent = payload.name;
-
-      alert("Perfil salvo!");
-    } catch(e){
-      console.error(e);
-      alert("Erro ao salvar perfil. Veja o console.");
-    } finally{
-      btnSaveProfile.disabled = false;
-    }
-  };
-}
-
-// --- PEDIDOS ---
-function listenOrders(){
+// --- LÓGICA DE PEDIDOS ---
+function listenOrders() {
   const q = query(collection(db, "orders"), where("restaurantId", "==", myRestaurantId));
   onSnapshot(q, (snap) => {
     elOrders.innerHTML = "";
@@ -194,9 +232,16 @@ function listenOrders(){
       const itemsHtml = (order.items || []).map(i => `<li>${i.qty}x ${i.name}</li>`).join("");
 
       div.innerHTML = `
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center">
-          <strong>Pedido #${d.id.slice(0,5)}</strong>
-          <span class="badge">${order.status || "novo"}</span>
+
+        <div style="display:flex; justify-content:space-between">
+            <strong>Pedido #${d.id.slice(0,5)}</strong>
+            <span class="badge">${order.status}</span>
+        </div>
+        <ul style="margin:10px 0; padding-left:20px; color:var(--muted)">${itemsHtml}</ul>
+        <div style="display:flex; gap:10px">
+            <button class="btn" onclick="updateStatus('${d.id}', 'Preparando')">Preparando</button>
+            <button class="btn" onclick="updateStatus('${d.id}', 'Saiu p/ Entrega')">Entregar</button>
+            <button class="btn" onclick="updateStatus('${d.id}', 'Entregue')">Entregue</button>
         </div>
         <ul style="margin:10px 0; padding-left:18px; color:var(--muted)">${itemsHtml}</ul>
       `;
@@ -215,28 +260,66 @@ function listenMenu(){
     elMenuList.innerHTML = "";
     let count = 0;
 
-    snap.forEach(d => {
-      const p = d.data() || {};
-      count++;
 
-      const card = document.createElement("div");
-      card.className = "ad-prodCard";
+// --- LÓGICA DE CARDÁPIO ---
+async function loadMenu() {
+    // Carrega produtos da subcoleção ou coleção raiz filtrada
+    // Vamos usar coleção raiz "products" filtrada pelo restaurantId para facilitar
+    const q = query(collection(db, "products"), where("restaurantId", "==", myRestaurantId));
+    
+    onSnapshot(q, (snap) => {
+        elMenuList.innerHTML = "";
+        snap.forEach(d => {
+            const p = d.data();
+            const div = document.createElement("div");
+            div.className = "card mc-productCard";
+            const cat = (p.category || '').trim();
+            div.innerHTML = `
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px">
+                  <div style="display:flex; gap:12px; align-items:flex-start;">
+                    ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" alt="" style="width:54px;height:54px;border-radius:12px;object-fit:cover;border:1px solid var(--border)"/>` : `<div style="width:54px;height:54px;border-radius:12px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)">📷</div>`}
+                    <div>
+                    <div class="cardTitle">${escapeHtml(p.name || 'Produto')}</div>
+                    <div class="cardSub">${cat ? escapeHtml(cat) + ' • ' : ''}R$ ${Number(p.price || 0).toFixed(2)}</div>
+                  </div>
+                  </div>
+                  <div style="display:flex; gap:8px">
+                    <button class="btn" data-act="edit">Editar</button>
+                    <button class="btn" data-act="del">Remover</button>
+                  </div>
+                </div>
+                ${p.description ? `<div style="margin-top:10px; color:var(--muted)">${escapeHtml(p.description)}</div>` : ''}
+            `;
 
-      const img = document.createElement("img");
-      img.className = "ad-prodImg";
-      img.alt = p.name || "Produto";
-      img.src = p.imageUrl || "./assets/logo-menuclick.png";
+            div.querySelector('[data-act="del"]').addEventListener('click', async (e) => {
+              e.stopPropagation();
+              if (!confirm('Remover este produto?')) return;
+              await deleteDoc(doc(db, 'products', d.id));
+            });
 
-      const meta = document.createElement("div");
-      meta.className = "ad-prodMeta";
-      meta.innerHTML = `
-        <div class="ad-prodName">${p.name || "Produto"}</div>
-        <div class="ad-prodPrice">R$ ${(p.price ?? 0).toFixed ? p.price.toFixed(2) : p.price}</div>
-      `;
+            div.querySelector('[data-act="edit"]').addEventListener('click', async (e) => {
+              e.stopPropagation();
+              const newName = prompt('Nome do produto:', p.name || '');
+              if (newName === null) return;
+              const newDesc = prompt('Descrição:', p.description || '');
+              if (newDesc === null) return;
+              const newCat = prompt('Categoria:', p.category || '');
+              if (newCat === null) return;
+              const newPriceStr = prompt('Preço (ex: 25.00):', String(p.price || ''));
+              if (newPriceStr === null) return;
+              const newPrice = parseFloat(String(newPriceStr).replace(',', '.'));
+              if (Number.isNaN(newPrice)) return alert('Preço inválido.');
+              await updateDoc(doc(db, 'products', d.id), {
+                name: String(newName).trim(),
+                description: String(newDesc).trim(),
+                category: String(newCat).trim(),
+                price: newPrice,
+                updatedAt: Date.now()
+              });
+            });
 
-      card.appendChild(img);
-      card.appendChild(meta);
-      elMenuList.appendChild(card);
+            elMenuList.appendChild(div);
+        });
     });
 
     if (mProducts) mProducts.textContent = String(count);
@@ -244,7 +327,7 @@ function listenMenu(){
   });
 }
 
-btnAdd.onclick = async () => {
+btnAdd.onclick = async () => 
   if(!inpName.value || !inpPrice.value) return alert("Preencha nome e preço");
   if(!myRestaurantId) return alert("Carregando loja...");
 
@@ -256,22 +339,23 @@ btnAdd.onclick = async () => {
     }
 
     await addDoc(collection(db, "products"), {
-      restaurantId: myRestaurantId,
-      name: inpName.value.trim(),
-      description: inpDesc.value.trim(),
-      category: prodCategory?.value?.trim() || "",
-      price: parseFloat(inpPrice.value),
-      imageUrl
-    });
 
-    inpName.value = ""; inpDesc.value = ""; inpPrice.value = "";
-    if (prodCategory) prodCategory.value = "";
-    if (prodPhotoFile) prodPhotoFile.value = "";
-    alert("Produto salvo!");
-  } catch(e){
-    console.error(e);
-    alert("Erro ao salvar produto. Veja o console.");
-  } finally{
+        restaurantId: myRestaurantId,
+        name: inpName.value,
+        description: inpDesc.value,
+        category: inpCat?.value || "",
+        price: parseFloat(inpPrice.value),
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+    });
+    
+    inpName.value = ""; inpDesc.value = ""; inpPrice.value = ""; if (inpCat) inpCat.value = "";
     btnAdd.disabled = false;
-  }
+    alert("Produto salvo!");
 };
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
