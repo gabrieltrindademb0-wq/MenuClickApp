@@ -683,3 +683,8 @@ html[data-theme="dark"] .mc-skel{
 
 /* Remove espaçamento extra caso existisse bottom */
 .mc-carousel__bottom{ display: none !important; }
+
+
+/* Product cards (dashboard) */
+.mc-productCard{cursor:default}
+#menuList.grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}

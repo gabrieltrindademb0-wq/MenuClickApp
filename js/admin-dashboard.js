@@ -1,5 +1,6 @@
 // js/admin-dashboard.js
-import { db } from "./firebase.js";
+import { db, storage } from "./firebase.js";
+import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 import { logoutTo, checkLoginStatus } from "./auth.js";
 import { collection, query, where, getDocs, addDoc, onSnapshot, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -15,18 +16,49 @@ const stDesc = document.getElementById('store_desc');
 const stSeg = document.getElementById('store_segment');
 const stCep = document.getElementById('store_cep');
 const stCity = document.getElementById('store_city');
+const stRua = document.getElementById('store_rua');
+const stNumero = document.getElementById('store_numero');
+const stBairro = document.getElementById('store_bairro');
+const stCompl = document.getElementById('store_complemento');
+const stCnpj = document.getElementById('store_cnpj');
+const stLogo = document.getElementById('store_logo');
+const stLogoPreview = document.getElementById('storeLogoPreview');
+const stLogoTop = document.getElementById('storeLogoTop');
+
 const stCats = document.getElementById('store_cats');
 const btnSaveStore = document.getElementById('btnSaveStore');
 const storeSaveMsg = document.getElementById('storeSaveMsg');
+
+function previewFile(inputEl, imgEl){
+  const f = inputEl?.files?.[0];
+  if(!f || !imgEl) return;
+  const url = URL.createObjectURL(f);
+  imgEl.src = url;
+  imgEl.style.display = "block";
+}
+
+stLogo?.addEventListener("change", ()=> previewFile(stLogo, stLogoPreview));
+inpImg?.addEventListener("change", ()=> previewFile(inpImg, inpImgPreview));
 
 // Form products
 const inpName = document.getElementById("prodName");
 const inpDesc = document.getElementById("prodDesc");
 const inpPrice = document.getElementById("prodPrice");
+const inpImg = document.getElementById("prodImage");
+const inpImgPreview = document.getElementById("prodImagePreview");
 const inpCat = document.getElementById("prodCat");
 const btnAdd = document.getElementById("btnAddProd");
 
 let myRestaurantId = null;
+
+async function uploadImage(file, path){
+  const safeName = (file.name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const fullPath = `${path}/${Date.now()}_${safeName}`;
+  const r = sRef(storage, fullPath);
+  await uploadBytes(r, file);
+  return await getDownloadURL(r);
+}
+
 let myRestaurantRef = null;
 
 // 1. Verifica login
@@ -153,9 +185,12 @@ async function loadMenu() {
             const cat = (p.category || '').trim();
             div.innerHTML = `
                 <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px">
-                  <div>
+                  <div style="display:flex; gap:12px; align-items:flex-start;">
+                    ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" alt="" style="width:54px;height:54px;border-radius:12px;object-fit:cover;border:1px solid var(--border)"/>` : `<div style="width:54px;height:54px;border-radius:12px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)">📷</div>`}
+                    <div>
                     <div class="cardTitle">${escapeHtml(p.name || 'Produto')}</div>
                     <div class="cardSub">${cat ? escapeHtml(cat) + ' • ' : ''}R$ ${Number(p.price || 0).toFixed(2)}</div>
+                  </div>
                   </div>
                   <div style="display:flex; gap:8px">
                     <button class="btn" data-act="edit">Editar</button>

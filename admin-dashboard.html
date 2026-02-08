@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -16,10 +16,19 @@
 <body>
   <div class="topbar">
     <div class="container">
-      <div class="row">
-        <div class="brand">Painel do Parceiro</div>
-        <button class="btn" id="btnLogout">Sair</button>
-      </div>
+      <div class="row" style="align-items:center; justify-content:space-between;">
+  <div class="brand" style="display:flex; align-items:center; gap:10px;">
+    <img id="storeLogoTop" src="./assets/logo-menuclick.png" alt="Logo da loja" style="width:34px;height:34px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:rgba(255,255,255,.06)"/>
+    <div>
+      <div style="font-weight:900">Painel do Parceiro</div>
+      <div class="hint" style="margin:0">Gerencie pedidos, produtos e sua vitrine</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
+    <button class="btn" id="btnLogout">Sair</button>
+  </div>
+</div>
     </div>
   </div>
 
@@ -55,13 +64,30 @@
               <option value="petshop">Petshop</option>
               <option value="outros">Outros</option>
             </select>
+            <input class="input" id="store_cnpj" placeholder="CNPJ (opcional)">
+          </div>
+
+          <div class="hint" style="margin:6px 0 8px">Logo da loja</div>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px">
+            <input class="input" type="file" id="store_logo" accept="image/*">
+            <img id="storeLogoPreview" src="" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--border)"/>
+          </div>
+
+          <div class="hint" style="margin:6px 0 8px">Endereço completo</div>
+          <div style="display:grid; grid-template-columns: 1.3fr .7fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_rua" placeholder="Rua / Av.">
+            <input class="input" id="store_numero" placeholder="Número">
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_bairro" placeholder="Bairro">
+            <input class="input" id="store_complemento" placeholder="Complemento (opcional)">
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
+            <input class="input" id="store_city" placeholder="Cidade">
             <input class="input" id="store_cep" placeholder="CEP (00000-000)">
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
-            <input class="input" id="store_city" placeholder="Cidade">
-            <input class="input" id="store_cats" placeholder="Categorias (ex: Pizzas, Bebidas)">
-          </div>
+          <input class="input" id="store_cats" placeholder="Categorias (ex: Pizzas, Bebidas)" style="margin-bottom:8px">
 
           <button class="btn btnAccent" id="btnSaveStore">Salvar alterações</button>
           <span class="hint" id="storeSaveMsg" style="margin-left:10px"></span>
@@ -74,6 +100,11 @@
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px">
             <input class="input" id="prodCat" placeholder="Categoria (ex: Lanches)">
             <input class="input" type="number" id="prodPrice" placeholder="Preço (ex: 25.00)" step="0.01">
+          </div>
+          <div class="hint" style="margin:6px 0 8px">Foto do produto</div>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px">
+            <input class="input" type="file" id="prodImage" accept="image/*">
+            <img id="prodImagePreview" src="" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--border)"/>
           </div>
           <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
           <p class="hint" style="margin-top:10px">Dica: clique em um produto para editar ou remover.</p>
@@ -95,6 +126,10 @@
       event.target.classList.add('active');
     }
   </script>
+  <script type="module">
+  import { initThemeToggle } from "./js/theme.js";
+  initThemeToggle();
+</script>
   <script type="module" src="./js/admin-dashboard.js"></script>
 </body>
 </html>
