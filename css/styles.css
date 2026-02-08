@@ -801,7 +801,7 @@ html[data-theme="dark"] .mc-skel{
 
 .mc-topbar__brand img,
 .mc-brand__logo {
-  height: 56px;      /* ajuste aqui */
+  height: 48px;      /* ajuste aqui */
   width: auto;
   object-fit: contain;
 }
