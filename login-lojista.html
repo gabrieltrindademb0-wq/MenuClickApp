@@ -67,102 +67,95 @@
   </div>
 
   <script type="module">
-    import { loginUser, checkLoginStatus, resetPassword, isValidEmail, isValidPhoneBR, isLikelyEmail, logoutTo } from "./js/auth.js";
-    import { db } from "./js/firebase.js";
-<<<<<<< HEAD
-    import { doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-=======
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
->>>>>>> 8ee44a8102a50acf158227eb3876dcab5067988f
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { initThemeToggle } from "./js/theme.js";
+import { loginUser, checkLoginStatus, resetPassword, isValidEmail, isValidPhoneBR, isLikelyEmail, logoutTo } from "./js/auth.js";
+import { db } from "./js/firebase.js";
+import { doc, getDoc, collection, query, where, getDocs, limit, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { initThemeToggle } from "./js/theme.js";
 
-    initThemeToggle();
-    checkLoginStatus(false);
+initThemeToggle();
+checkLoginStatus(false);
 
-    const auth = getAuth();
-    const val = (v) => (v || "").trim();
+const auth = getAuth();
+const val = (v) => (v || "").trim();
 
-    // Recuperação (somente e-mail)
-    document.getElementById("btnForgot").onclick = async () => {
-      const id = val(document.getElementById("identifier").value).toLowerCase();
-      if(!id) return alert("Digite seu e-mail no campo acima para recuperar a senha.");
-      if(!isLikelyEmail(id)) return alert("Para recuperar a senha, informe seu e-mail (não WhatsApp).");
-      if(!isValidEmail(id)) return alert("E-mail inválido.");
+async function redirectOwnerAfterLogin(user){
+  // 1) Confere se é conta de lojista
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+  const userData = userSnap.exists() ? (userSnap.data() || {}) : {};
+  if(userData.role !== "owner"){
+    await logoutTo("login-lojista.html");
+    alert("Essa conta é de cliente. Entre pela área de cliente.");
+    return;
+  }
 
-      try{
-        await resetPassword(id);
-        alert("Enviamos um e-mail de recuperação. Verifique sua caixa de entrada e spam.");
-      }catch(e){
-        console.error(e);
-        alert("Não foi possível enviar o e-mail de recuperação.");
-      }
-    };
+  // 2) Fonte de verdade: restaurants.approvalStatus + restaurants.isActive
+  let rq = query(collection(db, "restaurants"), where("ownerId", "==", user.uid), limit(1));
+  let rs = await getDocs(rq);
 
-    // Login
-    document.getElementById("btnLogin").onclick = async () => {
-      const identifier = val(document.getElementById("identifier").value);
-      const pass = document.getElementById("password").value || "";
+  // fallback por e-mail (caso ownerId esteja diferente)
+  if(rs.empty && user.email){
+    const email = String(user.email).toLowerCase();
+    rq = query(collection(db, "restaurants"), where("ownerEmail", "==", email), limit(1));
+    rs = await getDocs(rq);
+  }
 
-      if(!identifier) return alert("Digite seu e-mail ou WhatsApp.");
+  if(rs.empty){
+    window.location.href = "analise.html";
+    return;
+  }
 
-      if(isLikelyEmail(identifier)){
-        if(!isValidEmail(identifier)) return alert("E-mail inválido.");
-      } else {
-        if(!isValidPhoneBR(identifier)) return alert("WhatsApp inválido. Use DDD + número.");
-      }
+  const docSnap = rs.docs[0];
+  const r = docSnap.data() || {};
 
-      if(pass.length < 6) return alert("Senha inválida.");
+  // Se achou por e-mail e o ownerId não bate, corrige automaticamente
+  if(r.ownerId !== user.uid){
+    await setDoc(docSnap.ref, { ownerId: user.uid }, { merge: true });
+  }
 
-      try{
-        await loginUser(identifier, pass);
-<<<<<<< HEAD
-        // Redirecionamento explícito + verificação de aprovação pela loja (restaurants)
-        const uid = auth.currentUser?.uid;
-        if(!uid) throw new Error("NO_UID");
+  const approved = (r.approvalStatus === "approved") && (r.isActive === true);
+  window.location.href = approved ? "admin-dashboard.html" : "analise.html";
+}
 
-        // 1) Confere se é conta de lojista
-        const userSnap = await getDoc(doc(db, "users", uid));
-        const userData = userSnap.exists() ? userSnap.data() : {};
-        if(userData.role !== "owner"){
-          await logoutTo("login-lojista.html");
-          return alert("Essa conta é de cliente. Entre pela área de cliente.");
-        }
+// Recuperação (somente e-mail)
+document.getElementById("btnForgot").onclick = async () => {
+  const id = val(document.getElementById("identifier").value).toLowerCase();
+  if(!id) return alert("Digite seu e-mail no campo acima para recuperar a senha.");
+  if(!isLikelyEmail(id)) return alert("Para recuperar a senha, informe seu e-mail (não WhatsApp).");
+  if(!isValidEmail(id)) return alert("E-mail inválido.");
 
-        // 2) Fonte de verdade: restaurants.approvalStatus + restaurants.isActive
-        const rq = query(collection(db, "restaurants"), where("ownerId", "==", uid), limit(1));
-        const rs = await getDocs(rq);
-        if(rs.empty){
-          // ainda não tem loja vinculada
-          window.location.href = "analise.html";
-          return;
-        }
+  try{
+    await resetPassword(id);
+    alert("Enviamos um e-mail de recuperação. Verifique sua caixa de entrada e spam.");
+  }catch(e){
+    console.error(e);
+    alert("Não foi possível enviar o e-mail de recuperação.");
+  }
+};
 
-        const r = rs.docs[0].data() || {};
-        const approved = (r.approvalStatus === "approved") && (r.isActive === true);
-        window.location.href = approved ? "admin-dashboard.html" : "analise.html";
-=======
-        // Redirecionamento explícito (evita cair na área do cliente por engano)
-        try{
-          const uid = auth.currentUser?.uid;
-          if(!uid) throw new Error("NO_UID");
-          const snap = await getDoc(doc(db, "users", uid));
-          const data = snap.exists() ? snap.data() : {};
-          if(data.role !== "owner"){
-            await logoutTo("login-lojista.html");
-            return alert("Essa conta é de cliente. Entre pela área de cliente.");
-          }
-          window.location.href = "admin-dashboard.html";
-        }catch(e2){
-          console.error(e2);
-          // fallback: deixa o checkLoginStatus decidir
-        }
->>>>>>> 8ee44a8102a50acf158227eb3876dcab5067988f
-      }catch(e){
-        console.error(e);
-        alert("Erro ao entrar. Verifique seus dados.");
-      }
-    };
+// Login
+document.getElementById("btnLogin").onclick = async () => {
+  const identifier = val(document.getElementById("identifier").value);
+  const pass = document.getElementById("password").value || "";
+
+  if(!identifier) return alert("Digite seu e-mail ou WhatsApp.");
+
+  if(isLikelyEmail(identifier)){
+    if(!isValidEmail(identifier)) return alert("E-mail inválido.");
+  } else {
+    if(!isValidPhoneBR(identifier)) return alert("WhatsApp inválido. Use DDD + número.");
+  }
+
+  if(pass.length < 6) return alert("Senha inválida.");
+
+  try{
+    const cred = await loginUser(identifier, pass);
+    await redirectOwnerAfterLogin(cred.user);
+  }catch(e){
+    console.error(e);
+    alert("Erro ao entrar. Verifique seus dados.");
+  }
+};
   </script>
 </body>
 </html>

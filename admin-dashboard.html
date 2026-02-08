@@ -5,15 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Gestão - Restaurante</title>
   <link rel="stylesheet" href="./css/styles.css"/>
-  <style>
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-    .tabBtn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 16px; font-weight: bold; }
-    .tabBtn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-    .hidden { display: none; }
-    .orderCard { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border); }
-  </style>
+  <!-- Estilos do painel ficam no styles.css (admin) -->
 </head>
 <body>
+<<<<<<< HEAD
   <div class="topbar">
     <div class="container">
       <div class="row" style="align-items:center; justify-content:space-between;">
@@ -108,21 +103,170 @@
           </div>
           <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
           <p class="hint" style="margin-top:10px">Dica: clique em um produto para editar ou remover.</p>
+=======
+  <div class="ad-wrap">
+    <header class="ad-top">
+      <div class="ad-top__left">
+        <div class="ad-brand">
+          <div class="ad-brand__dot"></div>
+          <div>
+            <div class="ad-brand__title">Painel do Parceiro</div>
+            <div class="ad-brand__sub">Gerencie pedidos, produtos e sua vitrine</div>
+          </div>
+>>>>>>> 4f0c19f072776567afc030ba45c4f91a105527b9
         </div>
       </div>
+      <div class="ad-top__right">
+        <button class="ad-btn ad-btn--ghost" id="btnLogout">Sair</button>
+      </div>
+    </header>
 
-      <hr>
-      <h3>Seus Produtos:</h3>
-      <div id="menuList" class="grid"></div>
-    </div>
+    <main class="ad-main">
+      <section class="ad-hero">
+        <div class="ad-hero__head">
+          <div>
+            <h1 class="ad-h1" id="restName">Carregando loja...</h1>
+            <div class="ad-pill">✅ Status: Ativo</div>
+          </div>
+          <div class="ad-quick">
+            <a class="ad-btn ad-btn--soft" href="#" onclick="showTab('orders'); return false;">Ver pedidos</a>
+            <a class="ad-btn ad-btn--primary" href="#" onclick="showTab('menu'); return false;">Editar cardápio</a>
+          </div>
+        </div>
 
+        <div class="ad-stats">
+          <div class="ad-stat">
+            <div class="ad-stat__k" id="statOpen">0</div>
+            <div class="ad-stat__l">Pedidos em aberto</div>
+          </div>
+          <div class="ad-stat">
+            <div class="ad-stat__k" id="statProducts">0</div>
+            <div class="ad-stat__l">Produtos cadastrados</div>
+          </div>
+          <div class="ad-stat">
+            <div class="ad-stat__k">24h</div>
+            <div class="ad-stat__l">Tempo de resposta</div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="ad-tabs" aria-label="Abas do painel">
+        <button class="ad-tab active" onclick="showTab('orders')">Pedidos</button>
+        <button class="ad-tab" onclick="showTab('menu')">Cardápio</button>
+      </nav>
+
+      <section id="tab-orders" class="ad-section">
+        <div class="ad-section__head">
+          <h2 class="ad-h2">Pedidos em tempo real</h2>
+          <div class="ad-muted">Chegam automaticamente conforme o cliente finaliza.</div>
+        </div>
+        <div id="ordersList" class="ad-orders"></div>
+      </section>
+
+      <section id="tab-menu" class="ad-section hidden">
+        <div class="ad-grid">
+          <div class="ad-card">
+            <div class="ad-card__head">
+              <h3 class="ad-h3">Perfil da Loja</h3>
+              <div class="ad-muted">Aparece para o cliente no app</div>
+            </div>
+
+            <div class="ad-form">
+              <label class="ad-field">
+                <span>Nome da loja</span>
+                <input class="input" id="store_name" placeholder="Nome da loja">
+              </label>
+              <label class="ad-field">
+                <span>Descrição</span>
+                <input class="input" id="store_desc" placeholder="Descrição curta">
+              </label>
+
+              <div class="ad-row">
+                <label class="ad-field">
+                  <span>Segmento</span>
+                  <select class="input" id="store_segment">
+                    <option value="restaurante">Restaurante</option>
+                    <option value="mercado">Mercado</option>
+                    <option value="sorveteria">Sorveteria</option>
+                    <option value="farmacia">Farmácia</option>
+                    <option value="bebidas">Bebidas</option>
+                    <option value="petshop">Petshop</option>
+                    <option value="outros">Outros</option>
+                  </select>
+                </label>
+                <label class="ad-field">
+                  <span>CEP</span>
+                  <input class="input" id="store_cep" placeholder="CEP (00000-000)">
+                </label>
+              </div>
+
+              <div class="ad-row">
+                <label class="ad-field">
+                  <span>Cidade</span>
+                  <input class="input" id="store_city" placeholder="Cidade">
+                </label>
+                <label class="ad-field">
+                  <span>Categorias</span>
+                  <input class="input" id="store_cats" placeholder="Categorias (ex: Pizzas, Bebidas)">
+                </label>
+              </div>
+
+              <div class="ad-actions">
+                <button class="btn btnAccent" id="btnSaveStore">Salvar alterações</button>
+                <span class="ad-muted" id="storeSaveMsg"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ad-card">
+            <div class="ad-card__head">
+              <h3 class="ad-h3">Adicionar Produto</h3>
+              <div class="ad-muted">Clique em um produto abaixo para editar/remover</div>
+            </div>
+
+            <div class="ad-form">
+              <label class="ad-field">
+                <span>Nome</span>
+                <input class="input" id="prodName" placeholder="Ex: X-Bacon">
+              </label>
+              <label class="ad-field">
+                <span>Descrição</span>
+                <input class="input" id="prodDesc" placeholder="Ex: Pão, hambúrguer, queijo...">
+              </label>
+
+              <div class="ad-row">
+                <label class="ad-field">
+                  <span>Categoria</span>
+                  <input class="input" id="prodCat" placeholder="Ex: Lanches">
+                </label>
+                <label class="ad-field">
+                  <span>Preço</span>
+                  <input class="input" type="number" id="prodPrice" placeholder="Ex: 25.00" step="0.01">
+                </label>
+              </div>
+
+              <button class="btn btnAccent" id="btnAddProd">Salvar Produto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ad-section" style="margin-top:18px">
+          <div class="ad-section__head">
+            <h2 class="ad-h2">Seus produtos</h2>
+            <div class="ad-muted">Organize sua vitrine para vender mais</div>
+          </div>
+          <div id="menuList" class="ad-products"></div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
   <script>
     function showTab(tab) {
       document.getElementById('tab-orders').classList.toggle('hidden', tab !== 'orders');
       document.getElementById('tab-menu').classList.toggle('hidden', tab !== 'menu');
-      document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.ad-tab').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
     }
   </script>
