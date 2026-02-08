@@ -44,7 +44,7 @@ let activeCategory = "Todos";
 async function init() {
   if (!restId) {
     alert("Restaurante não identificado");
-    window.location.href = "index.html";
+    window.location.href = "explore.html";
     return;
   }
 

@@ -3,6 +3,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyC5KeS7dONR3bnxno92d5j3jcCJbmJOv-E",
   authDomain: "menuclick-ef41d.firebaseapp.com",
@@ -15,4 +18,8 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+
+export const auth = getAuth(app);
 export const storage = getStorage(app);
+export { app };

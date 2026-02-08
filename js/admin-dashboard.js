@@ -1,313 +1,354 @@
 // js/admin-dashboard.js
-import { db, storage } from "./firebase.js";
-import { logout, checkLoginStatus } from "./auth.js";
-import { collection, query, where, getDocs, addDoc, onSnapshot, updateDoc, doc, limit, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-const auth = getAuth();
+import { db, storage, auth } from "./firebase.js";
+import { logoutTo, checkLoginStatus } from "./auth.js";
 
-// Elements
-const elRestName = document.getElementById("restName");
-const elOrders = document.getElementById("ordersList");
-const elOrdersEmpty = document.getElementById("ordersEmpty");
-const elMenuList = document.getElementById("menuList");
-const elStatOrders = document.getElementById("statOrders");
-const elStatProducts = document.getElementById("statProducts");
-const elStoreStatus = document.getElementById("storeStatus");
+import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+import {
+  collection, query, where, getDocs, addDoc, onSnapshot,
+  updateDoc, doc, deleteDoc, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-const btnLogout = document.getElementById("btnLogout");
-btnLogout && (btnLogout.onclick = logout);
-
-// Tabs
-const tabBtns = Array.from(document.querySelectorAll("[data-tab]"));
-function setTab(name){
-  document.getElementById("tab-orders").style.display = name === "orders" ? "" : "none";
-  document.getElementById("tab-menu").style.display = name === "menu" ? "" : "none";
-  tabBtns.forEach(b => b.classList.toggle("is-active", b.dataset.tab === name));
-}
-tabBtns.forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
-setTab("orders");
-
-// Jump buttons
-document.querySelectorAll("[data-jump]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const t = btn.dataset.jump;
-    setTab(t);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-});
-
-// Profile inputs
-const storeNameInput = document.getElementById("storeNameInput");
-const storeDescInput = document.getElementById("storeDescInput");
-const storeSegment = document.getElementById("storeSegment");
-const storeCnpj = document.getElementById("storeCnpj");
-const storeCats = document.getElementById("storeCats");
-const storeLogoFile = document.getElementById("storeLogoFile");
-const storeLogoImg = document.getElementById("storeLogoImg");
-
-const addrStreet = document.getElementById("addrStreet");
-const addrNumber = document.getElementById("addrNumber");
-const addrDistrict = document.getElementById("addrDistrict");
-const addrComplement = document.getElementById("addrComplement");
-const addrCity = document.getElementById("addrCity");
-const addrCep = document.getElementById("addrCep");
-
-const btnSaveStore = document.getElementById("btnSaveStore");
-const storeSaveHint = document.getElementById("storeSaveHint");
-
-// Product inputs
-const inpName = document.getElementById("prodName");
-const inpDesc = document.getElementById("prodDesc");
-const inpCat = document.getElementById("prodCat");
-const inpPrice = document.getElementById("prodPrice");
-const prodPhotoFile = document.getElementById("prodPhotoFile");
-const btnAdd = document.getElementById("btnAddProd");
-
-// State
-let myRestaurantId = null;
-let myRestaurantRef = null;
-let myRestaurantData = null;
-
-// 1) protect route
+// Protege página: se não tiver login, manda para login do lojista
 checkLoginStatus(true);
 
-auth.onAuthStateChanged(async (user) => {
-  if (!user) return;
+// ------- Elements -------
+const $ = (id) => document.getElementById(id);
 
-  // Find restaurant by ownerId, fallback ownerEmail
-  const rest = await findMyRestaurant(user);
-  if (!rest) {
-    elRestName.textContent = "Você ainda não tem uma loja cadastrada.";
-    return;
-  }
+const elRestName = $("restName");
+const elStatus = $("storeStatus");
+const elOrders = $("ordersList");
+const elMenuList = $("menuList");
 
-  myRestaurantId = rest.id;
-  myRestaurantRef = rest.ref;
-  myRestaurantData = rest.data;
+const tabBtns = Array.from(document.querySelectorAll(".ad-tab"));
+const panelOrders = $("panelOrders");
+const panelMenu = $("panelMenu");
 
-  fillProfile(rest.data);
-  listenOrders();
-  loadMenu();
-});
+const btnLogout = $("btnLogout");
+const btnSaveProfile = $("btnSaveProfile");
+const btnAddProd = $("btnAddProd");
 
-async function findMyRestaurant(user){
-  let q = query(collection(db, "restaurants"), where("ownerId", "==", user.uid), limit(1));
-  let snap = await getDocs(q);
+const mOrders = $("mOrders");
+const mProducts = $("mProducts");
 
-  if (snap.empty && user.email){
-    q = query(collection(db, "restaurants"), where("ownerEmail", "==", user.email.toLowerCase()), limit(1));
-    snap = await getDocs(q);
-    if (!snap.empty){
-      // fix ownerId
-      await setDoc(snap.docs[0].ref, { ownerId: user.uid }, { merge: true });
-    }
-  }
+const storeLogoTop = $("storeLogoTop");
+const storeLogoImg = $("storeLogoImg");
+const storeSaveMsg = $("storeSaveMsg");
 
-  if (snap.empty) return null;
-  const d = snap.docs[0];
-  return { id: d.id, ref: d.ref, data: d.data() || {} };
+// Profile fields
+const storeName = $("storeName");
+const storeDesc = $("storeDesc");
+const storeSegment = $("storeSegment");
+const storeCnpj = $("storeCnpj");
+const storeCats = $("storeCats");
+
+const addrStreet = $("addrStreet");
+const addrNumber = $("addrNumber");
+const addrNeighborhood = $("addrNeighborhood");
+const addrComplement = $("addrComplement");
+const addrCity = $("addrCity");
+const addrCep = $("addrCep");
+
+const storeLogoFile = $("storeLogoFile");
+
+// Product fields
+const prodName = $("prodName");
+const prodDesc = $("prodDesc");
+const prodCategory = $("prodCategory");
+const prodPrice = $("prodPrice");
+const prodPhotoFile = $("prodPhotoFile");
+const prodImagePreview = $("prodImagePreview");
+
+let myRestaurantId = null;
+let myRestaurantRef = null;
+
+// ------- Helpers -------
+function cleanCsv(str){
+  return String(str || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .slice(0, 30);
 }
 
-function fillProfile(data){
-  elRestName.textContent = data.name || "Minha Loja";
-  elStoreStatus.textContent = (data.isActive ? "Status: Ativo" : "Status: Inativo");
-
-  storeNameInput.value = data.name || "";
-  storeDescInput.value = data.description || "";
-  storeSegment.value = data.segment || "restaurante";
-  storeCnpj.value = data.cnpj || "";
-  storeCats.value = data.categoriesText || (Array.isArray(data.categories) ? data.categories.join(", ") : "") || "";
-
-  // address
-  const a = data.address || {};
-  addrStreet.value = a.street || "";
-  addrNumber.value = a.number || "";
-  addrDistrict.value = a.district || "";
-  addrComplement.value = a.complement || "";
-  addrCity.value = a.city || data.city || "";
-  addrCep.value = a.cep || data.cep || "";
-
-  // logo
-  if (data.logoUrl){
-    storeLogoImg.src = data.logoUrl;
-  }
-}
-
-async function uploadImage(file, path){
-  const r = ref(storage, path);
+async function uploadImage(file, folder){
+  const safe = (file.name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const fullPath = `${folder}/${Date.now()}_${safe}`;
+  const r = sRef(storage, fullPath);
   await uploadBytes(r, file);
   return await getDownloadURL(r);
 }
 
-btnSaveStore?.addEventListener("click", async () => {
+function moneyToNumber(v){
+  const s = String(v || "").trim().replace(",", ".");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function setStatus(active){
+  if (!elStatus) return;
+  elStatus.textContent = active ? "✅ Status: Ativo" : "⏳ Status: Em análise";
+}
+
+function setTab(tab){
+  const isOrders = tab === "orders";
+  panelOrders?.classList.toggle("hidden", !isOrders);
+  panelMenu?.classList.toggle("hidden", isOrders);
+
+  tabBtns.forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+}
+
+function toast(msg, ok=true){
+  if (!storeSaveMsg) return;
+  storeSaveMsg.textContent = msg;
+  storeSaveMsg.style.color = ok ? "var(--text)" : "var(--danger, #ff5c5c)";
+  setTimeout(()=>{ if(storeSaveMsg) storeSaveMsg.textContent = ""; }, 2200);
+}
+
+function previewFile(inputEl, imgEl){
+  const f = inputEl?.files?.[0];
+  if(!f || !imgEl) return;
+  imgEl.src = URL.createObjectURL(f);
+  imgEl.style.display = "block";
+}
+
+// ------- UI events -------
+btnLogout?.addEventListener("click", () => logoutTo("login-lojista.html"));
+
+tabBtns.forEach(b=>{
+  b.addEventListener("click", ()=> setTab(b.dataset.tab));
+});
+
+$("tabOrders")?.addEventListener("click", (e)=>{ e.preventDefault(); setTab("orders"); });
+$("tabMenu")?.addEventListener("click", (e)=>{ e.preventDefault(); setTab("menu"); });
+
+storeLogoFile?.addEventListener("change", ()=> previewFile(storeLogoFile, storeLogoImg));
+prodPhotoFile?.addEventListener("change", ()=> previewFile(prodPhotoFile, prodImagePreview));
+
+// ------- Data load -------
+auth.onAuthStateChanged(async (user) => {
+  if (!user) return;
+  await loadMyRestaurant(user.uid, user.email);
+});
+
+async function loadMyRestaurant(uid, email){
+  // Busca restaurante pelo ownerId
+  let q = query(collection(db, "restaurants"), where("ownerId", "==", uid));
+  let snap = await getDocs(q);
+
+  // Fallback: por ownerEmail (caso cadastro antigo não salvou ownerId)
+  if (snap.empty && email){
+    q = query(collection(db, "restaurants"), where("ownerEmail", "==", email));
+    snap = await getDocs(q);
+  }
+
+  if (snap.empty){
+    elRestName.textContent = "Você ainda não tem uma loja.";
+    setStatus(false);
+    return;
+  }
+
+  const d = snap.docs[0];
+  myRestaurantId = d.id;
+  myRestaurantRef = d.ref;
+
+  const data = d.data() || {};
+  elRestName.textContent = data.name || "Minha loja";
+  setStatus(!!data.isActive);
+
+  // Logo
+  const logoUrl = data.logoUrl || "./assets/logo-menuclick.png";
+  if (storeLogoTop) storeLogoTop.src = logoUrl;
+  if (storeLogoImg){
+    storeLogoImg.src = logoUrl;
+    storeLogoImg.style.display = data.logoUrl ? "block" : "none";
+  }
+
+  // Fill profile
+  if (storeName) storeName.value = data.name || "";
+  if (storeDesc) storeDesc.value = data.description || "";
+  if (storeSegment) storeSegment.value = data.segment || "restaurante";
+  if (storeCnpj) storeCnpj.value = data.cnpj || "";
+  if (storeCats) storeCats.value = (data.categoriesNorm || (Array.isArray(data.categories) ? data.categories.join(", ") : data.categories) || "");
+
+  // Address
+  const addr = data.address || {};
+  if (addrStreet) addrStreet.value = addr.street || "";
+  if (addrNumber) addrNumber.value = addr.number || "";
+  if (addrNeighborhood) addrNeighborhood.value = addr.neighborhood || "";
+  if (addrComplement) addrComplement.value = addr.complement || "";
+  if (addrCity) addrCity.value = (addr.city || data.city || "");
+  if (addrCep) addrCep.value = (addr.cep || data.cep || "");
+
+  // Listeners
+  listenOrders();
+  listenProducts();
+}
+
+// ------- Save profile -------
+btnSaveProfile?.addEventListener("click", async () => {
   if (!myRestaurantRef) return;
 
-  btnSaveStore.disabled = true;
-  storeSaveHint.textContent = "Salvando...";
-
   try{
-    let logoUrl = myRestaurantData?.logoUrl || "";
-    const file = storeLogoFile?.files?.[0];
-    if (file){
-      logoUrl = await uploadImage(file, `stores/${myRestaurantId}/logo_${Date.now()}.jpg`);
+    btnSaveProfile.disabled = true;
+
+    let logoUrl = null;
+    const f = storeLogoFile?.files?.[0];
+    if (f){
+      logoUrl = await uploadImage(f, `restaurants/${myRestaurantId}/logo`);
     }
 
+    const cats = cleanCsv(storeCats?.value);
+
     const payload = {
-      name: storeNameInput.value.trim(),
-      description: storeDescInput.value.trim(),
-      segment: storeSegment.value,
-      cnpj: storeCnpj.value.trim(),
-      categoriesText: storeCats.value.trim(),
-      logoUrl,
+      name: (storeName?.value || "").trim(),
+      description: (storeDesc?.value || "").trim(),
+      segment: storeSegment?.value || "restaurante",
+      cnpj: (storeCnpj?.value || "").trim(),
+      categoriesNorm: cats.join(", "),
+      categories: cats,
       address: {
-        street: addrStreet.value.trim(),
-        number: addrNumber.value.trim(),
-        district: addrDistrict.value.trim(),
-        complement: addrComplement.value.trim(),
-        city: addrCity.value.trim(),
-        cep: addrCep.value.trim(),
+        street: (addrStreet?.value || "").trim(),
+        number: (addrNumber?.value || "").trim(),
+        neighborhood: (addrNeighborhood?.value || "").trim(),
+        complement: (addrComplement?.value || "").trim(),
+        city: (addrCity?.value || "").trim(),
+        cep: (addrCep?.value || "").trim()
       },
-      // mantém compatibilidade
-      city: addrCity.value.trim(),
-      cep: (addrCep.value || "").replace(/\D/g,""),
+      city: (addrCity?.value || "").trim(),
+      cep: (addrCep?.value || "").trim(),
       updatedAt: Date.now()
     };
 
-    await updateDoc(myRestaurantRef, payload);
-    myRestaurantData = { ...(myRestaurantData||{}), ...payload };
-    fillProfile(myRestaurantData);
+    if (logoUrl){
+      payload.logoUrl = logoUrl;
+      if (storeLogoTop) storeLogoTop.src = logoUrl;
+    }
 
-    storeSaveHint.textContent = "✅ Alterações salvas!";
+    await updateDoc(myRestaurantRef, payload);
+    toast("Salvo!");
   }catch(e){
     console.error(e);
-    storeSaveHint.textContent = "❌ Não foi possível salvar. Verifique Storage Rules e login.";
-    alert("Não foi possível salvar. Se for upload, habilite Storage e regras.");
+    toast("Erro ao salvar", false);
   }finally{
-    btnSaveStore.disabled = false;
+    btnSaveProfile.disabled = false;
   }
 });
 
-// --- Orders ---
-function listenOrders() {
-  const q = query(collection(db, "orders"), where("restaurantId", "==", myRestaurantId));
-  onSnapshot(q, (snap) => {
+// ------- Products -------
+btnAddProd?.addEventListener("click", async () => {
+  if (!myRestaurantId) return;
+
+  const name = (prodName?.value || "").trim();
+  if (!name){
+    toast("Informe o nome do produto", false);
+    return;
+  }
+
+  try{
+    btnAddProd.disabled = true;
+
+    let imageUrl = "";
+    const f = prodPhotoFile?.files?.[0];
+    if (f){
+      imageUrl = await uploadImage(f, `restaurants/${myRestaurantId}/products`);
+    }
+
+    const payload = {
+      restaurantId: myRestaurantId,
+      name,
+      description: (prodDesc?.value || "").trim(),
+      category: (prodCategory?.value || "").trim(),
+      price: moneyToNumber(prodPrice?.value),
+      imageUrl,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+
+    await addDoc(collection(db, "products"), payload);
+
+    // clear
+    if (prodName) prodName.value = "";
+    if (prodDesc) prodDesc.value = "";
+    if (prodCategory) prodCategory.value = "";
+    if (prodPrice) prodPrice.value = "";
+    if (prodPhotoFile) prodPhotoFile.value = "";
+    if (prodImagePreview){
+      prodImagePreview.src = "";
+      prodImagePreview.style.display = "none";
+    }
+
+    toast("Produto salvo!");
+  }catch(e){
+    console.error(e);
+    toast("Erro ao salvar produto", false);
+  }finally{
+    btnAddProd.disabled = false;
+  }
+});
+
+function listenOrders(){
+  if (!elOrders) return;
+  const qy = query(collection(db, "orders"), where("restaurantId", "==", myRestaurantId));
+  onSnapshot(qy, (snap)=>{
+    mOrders && (mOrders.textContent = String(snap.size || 0));
     elOrders.innerHTML = "";
-    let count = 0;
 
-    snap.forEach(d => {
-      count++;
-      const order = d.data() || {};
+    if (snap.empty){
+      elOrders.innerHTML = '<div class="ad-empty">Sem pedidos no momento.</div>';
+      return;
+    }
+
+    snap.forEach(docu=>{
+      const o = docu.data() || {};
       const card = document.createElement("div");
-      card.className = "mc-card";
-      card.style.padding = "14px";
-
-      const itemsHtml = (order.items || []).map(i => `<li>${i.qty || 1}x ${i.name || "Item"}</li>`).join("");
-
+      card.className = "ad-order";
+      const items = Array.isArray(o.items) ? o.items.map(i=>`${i.qtd || 1}x ${i.name || "Item"}`).join(", ") : "";
       card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-          <strong>Pedido #${String(d.id).slice(0,5)}</strong>
-          <span class="mc-chip" style="padding:6px 10px;">${order.status || "Novo"}</span>
+        <div class="ad-order__top">
+          <div class="ad-order__id">Pedido #${docu.id.slice(-6)}</div>
+          <div class="ad-order__total">R$ ${(o.total ?? 0).toFixed ? (o.total).toFixed(2) : (o.total || "0.00")}</div>
         </div>
-        <ul style="margin:10px 0 0; padding-left:18px; color:var(--muted)">${itemsHtml || "<li>(sem itens)</li>"}</ul>
-        <div style="display:flex; gap:10px; margin-top:12px;">
-          <button class="mc-btn mc-btn--ghost" data-status="Preparando" data-id="${d.id}">Preparando</button>
-          <button class="mc-btn" data-status="Saiu p/ Entrega" data-id="${d.id}">Entregar</button>
-        </div>
+        <div class="ad-order__muted">${items || "Itens não informados"}</div>
+        <div class="ad-order__muted">${(o.customerName || "Cliente")} • ${(o.payment || "Pagamento")} </div>
       `;
 
       elOrders.appendChild(card);
     });
-
-    elStatOrders.textContent = String(count);
-    elOrdersEmpty.style.display = count === 0 ? "" : "none";
-
-    // bind status buttons
-    elOrders.querySelectorAll("button[data-id]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        await updateDoc(doc(db, "orders", btn.dataset.id), { status: btn.dataset.status });
-      });
-    });
   });
 }
 
-// --- Menu ---
-function loadMenu() {
-  const q = query(collection(db, "products"), where("restaurantId", "==", myRestaurantId));
-  onSnapshot(q, (snap) => {
+
+function listenProducts(){
+  if (!elMenuList) return;
+  const qy = query(collection(db, "products"), where("restaurantId", "==", myRestaurantId));
+  onSnapshot(qy, (snap)=>{
+    mProducts && (mProducts.textContent = String(snap.size || 0));
     elMenuList.innerHTML = "";
-    let count = 0;
 
-    snap.forEach(d => {
-      count++;
-      const p = d.data() || {};
-      const row = document.createElement("div");
-      row.className = "mc-card";
-      row.style.padding = "12px";
-
-      const img = p.photoUrl ? `<img src="${p.photoUrl}" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid var(--border)"/>` : `<div style="width:72px;height:72px;border-radius:12px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)">sem foto</div>`;
-
-      row.innerHTML = `
-        <div style="display:flex; gap:12px; align-items:center; justify-content:space-between;">
-          <div style="display:flex; gap:12px; align-items:center;">
-            ${img}
-            <div>
-              <div style="font-weight:900">${p.name || "Produto"}</div>
-              <div class="mc-muted">${p.description || ""}</div>
-              <div style="margin-top:6px;font-weight:900">R$ ${Number(p.price||0).toFixed(2)}</div>
-            </div>
-          </div>
-          <button class="mc-btn mc-btn--ghost" data-remove="${d.id}">Remover</button>
-        </div>
-      `;
-
-      elMenuList.appendChild(row);
-    });
-
-    elStatProducts.textContent = String(count);
-
-    elMenuList.querySelectorAll("button[data-remove]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        if (!confirm("Remover este produto?")) return;
-        await updateDoc(doc(db, "products", btn.dataset.remove), { deleted: true });
-        // opcional: você pode trocar por deleteDoc, mas manter update evita regra extra
-      });
-    });
-  });
-}
-
-btnAdd?.addEventListener("click", async () => {
-  if(!inpName.value.trim() || !inpPrice.value) return alert("Preencha nome e preço");
-  if (!myRestaurantId) return;
-
-  btnAdd.disabled = true;
-
-  try{
-    let photoUrl = "";
-    const file = prodPhotoFile?.files?.[0];
-    if (file){
-      photoUrl = await uploadImage(file, `stores/${myRestaurantId}/products/${Date.now()}_${file.name}`);
+    if (snap.empty){
+      elMenuList.innerHTML = '<div class="ad-empty">Nenhum produto cadastrado ainda.</div>';
+      return;
     }
 
-    await addDoc(collection(db, "products"), {
-      restaurantId: myRestaurantId,
-      name: inpName.value.trim(),
-      description: inpDesc.value.trim(),
-      category: inpCat.value.trim(),
-      price: parseFloat(inpPrice.value),
-      photoUrl,
-      createdAt: Date.now(),
-      deleted: false
+    snap.forEach(docu=>{
+      const p = docu.data() || {};
+      const item = document.createElement("div");
+      item.className = "ad-prod";
+      const img = p.imageUrl ? `<img class="ad-prod__img" src="${p.imageUrl}" alt="">` : `<div class="ad-prod__img ad-prod__img--ph">📦</div>`;
+      item.innerHTML = `
+        ${img}
+        <div class="ad-prod__info">
+          <div class="ad-prod__name">${p.name || "Produto"}</div>
+          <div class="ad-prod__muted">${p.category || "Sem categoria"} • R$ ${Number(p.price||0).toFixed(2)}</div>
+        </div>
+        <button class="ad-btn ad-btn--ghost ad-prod__del" type="button">Remover</button>
+      `;
+      item.querySelector(".ad-prod__del")?.addEventListener("click", async ()=>{
+        if (!confirm("Remover este produto?")) return;
+        await deleteDoc(doc(db, "products", docu.id));
+      });
+      elMenuList.appendChild(item);
     });
-
-    inpName.value = ""; inpDesc.value = ""; inpCat.value = ""; inpPrice.value = ""; 
-    if (prodPhotoFile) prodPhotoFile.value = "";
-    alert("Produto salvo!");
-  }catch(e){
-    console.error(e);
-    alert("Não foi possível salvar o produto. Verifique Storage Rules.");
-  }finally{
-    btnAdd.disabled = false;
-  }
-});
+  });
+}

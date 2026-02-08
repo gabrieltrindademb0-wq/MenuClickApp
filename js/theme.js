@@ -6,6 +6,9 @@ export function setTheme(theme) {
   document.documentElement.setAttribute("data-theme", t);
   try { localStorage.setItem(KEY, t); } catch {}
   updateThemeIcon(t);
+
+
+  updateThemeLogos(t);
 }
 
 export function getTheme() {
@@ -13,12 +16,14 @@ export function getTheme() {
     try { return localStorage.getItem(KEY); } catch { return null; }
   })();
   if (saved === "dark" || saved === "light") return saved;
-  // padrão: claro
+
+
   return "light";
 }
 
 export function initThemeToggle() {
-  // aplica tema salvo
+
+
   setTheme(getTheme());
 
   const btn = document.getElementById("themeToggle");
@@ -34,7 +39,22 @@ function updateThemeIcon(theme) {
   const btn = document.getElementById("themeToggle");
   if (!btn) return;
 
-  // se você usa emoji/ícone dentro do botão:
-  // exemplo: <button id="themeToggle">🌙</button>
-  btn.textContent = theme === "dark" ? "☀️" : "🌙";
+
+  const icon = btn.querySelector?.("[data-icon]");
+  const v = theme === "dark" ? "☀️" : "🌙";
+  if (icon) icon.textContent = v;
+  else btn.textContent = v;
+
+  btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+}
+
+function updateThemeLogos(theme){
+  // Qualquer <img> com data-logo-dark e data-logo-light troca automaticamente
+  const imgs = document.querySelectorAll("img[data-logo-dark][data-logo-light]");
+  imgs.forEach(img => {
+    const darkSrc = img.getAttribute("data-logo-dark");
+    const lightSrc = img.getAttribute("data-logo-light");
+    if (!darkSrc || !lightSrc) return;
+    img.src = (theme === "dark") ? darkSrc : lightSrc;
+  });
 }
