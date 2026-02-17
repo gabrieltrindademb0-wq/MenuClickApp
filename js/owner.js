@@ -3,7 +3,7 @@
 
 import { db } from "./firebase.js";
 import { registerUser, normalizePhone } from "./auth.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 function cleanCsv(str){
   return String(str || "")
@@ -54,6 +54,9 @@ export async function createOwnerAndStore(form){
     approvalStatus: "pending"
   };
 
-  await addDoc(collection(db, "restaurants"), payload);
+  const restRef = doc(db, "restaurants", user.uid);
+  await setDoc(restRef, payload);
+  // guarda vínculo (para recuperar fácil)
+  await setDoc(doc(db, "users", user.uid), { restaurantId: user.uid }, { merge: true });
   return user;
 }

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>MenuClick — Painel do Parceiro</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+</head>
+
+<body class="mc-app">
+  <header class="mc-topnav">
+    <div class="container mc-topnav__inner">
+      <a class="mc-brand" href="../index.html" aria-label="MenuClick">
+        <img class="mc-brand__logo" id="storeLogoImg" src="../assets/logo-menuclick.png" alt="MenuClick"/>
+        <span class="mc-brand__name">Painel do Parceiro</span>
+      </a>
+
+      <div class="mc-topnav__actions">
+        <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false">🌙</button>
+        <button class="mc-btn mc-btn--soft" id="btnLogout" type="button">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 22px 0 60px;">
+    <section class="mc-card" style="padding:18px; margin-bottom:18px;">
+      <div style="display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
+        <div>
+          <div class="mc-chip" style="display:inline-flex; align-items:center; gap:8px;">🟢 <span id="storeStatus">Status: Ativo</span></div>
+          <h1 class="h1" style="margin:10px 0 6px;" id="restName">Carregando loja...</h1>
+          <div class="mc-muted">Gerencie pedidos, produtos e sua vitrine.</div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="mc-btn mc-btn--ghost" data-jump="orders">Ver pedidos</button>
+          <button class="mc-btn" data-jump="menu">Editar cardápio</button>
+        </div>
+      </div>
+
+      <div class="mc-grid3" style="margin-top:14px;">
+        <div class="mc-feature">
+          <div class="mc-feature__title" id="statOrders">0</div>
+          <div class="mc-feature__text">Pedidos em aberto</div>
+        </div>
+        <div class="mc-feature">
+          <div class="mc-feature__title" id="statProducts">0</div>
+          <div class="mc-feature__text">Produtos cadastrados</div>
+        </div>
+        <div class="mc-feature">
+          <div class="mc-feature__title">24h</div>
+          <div class="mc-feature__text">Tempo de resposta</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="mc-tabs" style="display:flex; gap:10px; margin-bottom:14px;">
+      <button class="mc-tab is-active" data-tab="orders">Pedidos</button>
+      <button class="mc-tab" data-tab="menu">Cardápio</button>
+    </div>
+
+    <!-- PEDIDOS -->
+    <section id="tab-orders" class="mc-reveal">
+      <div class="mc-section__head" style="margin-bottom:10px;">
+        <h2 style="margin:0;">Pedidos em tempo real</h2>
+        <p style="margin:4px 0 0;" class="mc-muted">Chegam automaticamente quando o cliente finaliza.</p>
+      </div>
+      <div id="ordersList" class="mc-grid3" style="grid-template-columns: 1fr; gap:12px;"></div>
+      <div id="ordersEmpty" class="mc-card" style="padding:14px; display:none;">
+        <b>Nenhum pedido no momento.</b>
+        <div class="mc-muted" style="margin-top:6px;">Quando o cliente finalizar, aparece aqui automaticamente.</div>
+      </div>
+    </section>
+
+    <!-- CARDÁPIO -->
+    <section id="tab-menu" class="mc-reveal" style="display:none;">
+      <div class="mc-grid3" style="grid-template-columns: 1.2fr 1fr; align-items:start;">
+        <!-- PERFIL -->
+        <div class="mc-card" style="padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div>
+              <h2 style="margin:0;">Perfil da Loja</h2>
+              <div class="mc-muted" style="margin-top:4px;">Essas informações aparecem para o cliente no app.</div>
+            </div>
+          </div>
+
+          <div class="mc-formgrid" style="margin-top:12px;">
+            <label class="mc-field">
+              <span>Nome da loja</span>
+              <input class="mc-input" id="storeNameInput" placeholder="Ex: Drogaria São Pedro"/>
+            </label>
+
+            <label class="mc-field">
+              <span>Descrição curta</span>
+              <input class="mc-input" id="storeDescInput" placeholder="Ex: Entrega rápida e atendimento 24h"/>
+            </label>
+
+            <label class="mc-field">
+              <span>Segmento</span>
+              <select class="mc-input" id="storeSegment">
+                <option value="restaurante">Restaurante</option>
+                <option value="mercado">Mercado</option>
+                <option value="farmacia">Farmácia</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="petshop">Petshop</option>
+              </select>
+            </label>
+
+            <label class="mc-field">
+              <span>CNPJ (opcional)</span>
+              <input class="mc-input" id="storeCnpj" placeholder="00.000.000/0000-00"/>
+            </label>
+
+            <label class="mc-field">
+              <span>Logo da loja</span>
+              <input class="mc-input" id="storeLogoFile" type="file" accept="image/*"/>
+              <small class="mc-muted">PNG/JPG • Recomendado: 512x512</small>
+            </label>
+
+            <div class="mc-divider"></div>
+
+            <div style="grid-column:1/-1; font-weight:800;">Endereço completo</div>
+
+            <label class="mc-field">
+              <span>Rua / Av.</span>
+              <input class="mc-input" id="addrStreet" placeholder="Rua / Avenida"/>
+            </label>
+            <label class="mc-field">
+              <span>Número</span>
+              <input class="mc-input" id="addrNumber" placeholder="Nº"/>
+            </label>
+            <label class="mc-field">
+              <span>Bairro</span>
+              <input class="mc-input" id="addrDistrict" placeholder="Bairro"/>
+            </label>
+            <label class="mc-field">
+              <span>Complemento (opcional)</span>
+              <input class="mc-input" id="addrComplement" placeholder="Apto, bloco, referência"/>
+            </label>
+            <label class="mc-field">
+              <span>Cidade</span>
+              <input class="mc-input" id="addrCity" placeholder="Cidade"/>
+            </label>
+            <label class="mc-field">
+              <span>CEP</span>
+              <input class="mc-input" id="addrCep" placeholder="00000-000"/>
+            </label>
+
+            <label class="mc-field" style="grid-column:1/-1;">
+              <span>Categorias</span>
+              <input class="mc-input" id="storeCats" placeholder="Ex: Pizzas, Massas, Bebidas"/>
+            </label>
+          </div>
+
+          <button class="mc-btn" id="btnSaveStore" style="margin-top:12px;">Salvar alterações</button>
+          <div class="mc-muted" id="storeSaveHint" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- PRODUTO -->
+        <div class="mc-card" style="padding:16px;">
+          <h2 style="margin:0;">Adicionar Produto</h2>
+          <div class="mc-muted" style="margin-top:4px;">Clique em um produto para editar/remover (em breve).</div>
+
+          <div class="mc-formgrid" style="margin-top:12px;">
+            <label class="mc-field">
+              <span>Nome</span>
+              <input class="mc-input" id="prodName" placeholder="Ex: X-Bacon"/>
+            </label>
+
+            <label class="mc-field">
+              <span>Preço</span>
+              <input class="mc-input" type="number" id="prodPrice" placeholder="Ex: 25.00" step="0.01"/>
+            </label>
+
+            <label class="mc-field" style="grid-column:1/-1;">
+              <span>Descrição</span>
+              <input class="mc-input" id="prodDesc" placeholder="Ex: Pão, hambúrguer, queijo..."/>
+            </label>
+
+            <label class="mc-field" style="grid-column:1/-1;">
+              <span>Categoria</span>
+              <input class="mc-input" id="prodCat" placeholder="Ex: Lanches"/>
+            </label>
+
+            <label class="mc-field" style="grid-column:1/-1;">
+              <span>Foto do produto</span>
+              <input class="mc-input" id="prodPhotoFile" type="file" accept="image/*"/>
+              <small class="mc-muted">PNG/JPG • Recomendado: 1200x800</small>
+            </label>
+          </div>
+
+          <button class="mc-btn" id="btnAddProd" style="margin-top:12px;">Salvar produto</button>
+
+          <div class="mc-divider" style="margin:16px 0;"></div>
+
+          <h3 style="margin:0 0 10px;">Seus produtos</h3>
+          <div id="menuList" class="mc-grid3" style="grid-template-columns: 1fr; gap:10px;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    initThemeToggle();
+  </script>
+  <script type="module" src="../js/admin-dashboard.js"></script>
+</body>
+</html>

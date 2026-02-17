@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>MenuClick — Área do Lojista</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+</head>
+
+<body class="mc-app">
+  <div class="mc-shell">
+    <header class="mc-topnav">
+      <div class="container mc-topnav__inner">
+        <a class="mc-brand" href="../index.html" aria-label="MenuClick">
+          <img class="mc-brand__logo" src="../assets/logo-menuclick.png" data-logo-dark="./assets/logo-menuclick.png" data-logo-light="./assets/logo-menuclick-light.png" alt="MenuClick"/>
+          <span class="mc-brand__name">MenuClick</span>
+        </a>
+
+        <nav class="mc-navlinks" aria-label="Navegação">
+          <a class="mc-link" href="#planos">Planos</a>
+          <a class="mc-link" href="#beneficios">Benefícios</a>
+          <a class="mc-link" href="#painel">Painel</a>
+        </nav>
+
+        <div class="mc-topnav__actions">
+          <a class="mc-btn mc-btn--ghost" href="../index.html">Voltar</a>
+          <a class="mc-btn mc-btn--soft" href="./login.html">Entrar</a>
+          <a class="mc-btn" href="./signup.html">Comece a vender</a>
+          <button class="ifoodIconBtn ifoodIconBtn--ghost" id="themeToggle" type="button" aria-label="Alternar tema" aria-pressed="false"><span data-icon>🌙</span></button>
+        </div>
+      </div>
+    </header>
+
+    <section class="mc-hero mc-hero--seller">
+      <div class="container mc-hero__inner">
+        <div class="mc-hero__copy">
+          <div class="mc-chip">🚀 Para restaurantes, mercados, farmácias, bebidas e mais</div>
+          <h1>Venda no delivery com um painel simples e profissional.</h1>
+          <p class="mc-lead">Cadastre sua loja, organize categorias, publique produtos e acompanhe pedidos em tempo real.</p>
+
+          <div class="mc-ctaRow">
+            <a class="mc-btn" href="./signup.html">Comece a vender</a>
+            <a class="mc-btn mc-btn--soft" href="./login.html">Já sou parceiro</a>
+          </div>
+
+          <div class="mc-miniList" id="beneficios">
+            <div class="mc-miniItem mc-reveal">✅ Cadastro rápido e verificação básica</div>
+            <div class="mc-miniItem mc-reveal">✅ Produtos e categorias em poucos cliques</div>
+            <div class="mc-miniItem mc-reveal">✅ Pedidos chegando em tempo real</div>
+            <div class="mc-miniItem mc-reveal">✅ Suporte via WhatsApp</div>
+          </div>
+        </div>
+
+        <div class="mc-sellerCard" id="planos">
+          <div class="mc-sellerCard__title">Regras de adesão</div>
+          <div class="mc-sellerCard__sub">Transparente e fácil de entender</div>
+
+          <div class="mc-priceRow">
+            <div class="mc-priceBox">
+              <div class="mc-priceBox__label">Plano Delivery</div>
+              <div class="mc-priceBox__value">6%</div>
+              <div class="mc-priceBox__hint">Comissão sobre pedidos delivery</div>
+            </div>
+            <div class="mc-priceBox">
+              <div class="mc-priceBox__label">Pagamento no app</div>
+              <div class="mc-priceBox__value">4,99%</div>
+              <div class="mc-priceBox__hint">Taxa para pedidos pagos via app</div>
+            </div>
+          </div>
+
+          <hr class="mc-hr"/>
+
+          <div class="mc-sellerCard__title" id="painel">O que você ganha</div>
+          <div class="mc-bullets">
+            <div class="mc-bullet mc-reveal">📈 Página da sua loja otimizada para conversão</div>
+            <div class="mc-bullet mc-reveal">🧾 Painel para editar nome, descrição e categorias</div>
+            <div class="mc-bullet mc-reveal">🧺 Cadastro de produtos com preço, descrição e categoria</div>
+            <div class="mc-bullet mc-reveal">🔔 Pedidos com atualização de status (preparando / saiu / entregue)</div>
+            <div class="mc-bullet mc-reveal">🧩 Suporte e melhorias contínuas</div>
+          </div>
+
+          <div class="mc-ctaRow" style="margin-top:16px">
+            <a class="mc-btn" href="./signup.html">Comece a vender</a>
+            <a class="mc-btn mc-btn--ghost" href="./login.html">Entrar no painel</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mc-section">
+      <div class="container">
+        <div class="mc-section__head">
+          <h2>Um painel feito para você não perder tempo</h2>
+          <p>Gerencie sua loja e seu cardápio em minutos, sem complicação técnica.</p>
+        </div>
+
+        <div class="mc-grid3">
+          <div class="mc-feature mc-reveal">
+            <div class="mc-feature__icon">🏪</div>
+            <div class="mc-feature__title">Perfil da loja</div>
+            <div class="mc-feature__text">Troque nome, descrição, segmento, CEP/cidade e categorias.</div>
+          </div>
+          <div class="mc-feature mc-reveal">
+            <div class="mc-feature__icon">🍕</div>
+            <div class="mc-feature__title">Produtos e categorias</div>
+            <div class="mc-feature__text">Adicione, edite ou remova itens. Organize por categoria.</div>
+          </div>
+          <div class="mc-feature mc-reveal">
+            <div class="mc-feature__icon">⚡</div>
+            <div class="mc-feature__title">Pedidos ao vivo</div>
+            <div class="mc-feature__text">Receba pedidos em tempo real e atualize o status rapidamente.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="mc-footer">
+      <div class="container mc-footer__inner">
+        <div class="mc-footer__col">
+          <a class="mc-brand" href="../index.html" aria-label="MenuClick">
+            <img class="mc-brand__logo" src="../assets/logo-menuclick.png" data-logo-dark="./assets/logo-menuclick.png" data-logo-light="./assets/logo-menuclick-light.png" alt="MenuClick"/>
+            <span class="mc-brand__name">MenuClick</span>
+          </a>
+          <p class="mc-footer__muted">Seja parceiro: mais visibilidade, mais pedidos e gestão simples.</p>
+          <div class="mc-footer__mini">© <span id="year"></span> MenuClick</div>
+        </div>
+
+        <div class="mc-footer__col">
+          <div class="mc-footer__title">Ações</div>
+          <a class="mc-footer__link" href="./signup.html">Comece a vender</a>
+          <a class="mc-footer__link" href="./login.html">Entrar no painel</a>
+          <a class="mc-footer__link" href=".../index.html#buscar">Buscar estabelecimentos</a>
+        </div>
+
+        <div class="mc-footer__col">
+          <div class="mc-footer__title">Suporte</div>
+          <div class="mc-footer__muted">WhatsApp: (35) 99781-4774</div>
+          <a class="mc-footer__pill" href="https://wa.me/5535997814774" target="_blank" rel="noreferrer">💬 Falar com suporte</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initThemeToggle } from "./js/theme.js";
+    import { initHome } from "./js/home.js";
+    initThemeToggle();
+    initHome();
+  </script>
+</body>
+</html>

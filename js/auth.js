@@ -194,7 +194,7 @@ try {
 }
 
       // Bloqueia acesso ao painel se ainda estiver em análise
-      if ((path.includes("admin-dashboard") || path.includes("admin.html")) && role === "owner" && ownerStatus !== "approved") {
+      if ((path.includes("admin-dashboard") || path.includes("admin/painel.html")) && role === "owner" && ownerStatus !== "approved") {
         window.location.href = "analise.html";
         return;
       }
@@ -202,9 +202,9 @@ try {
       // Se estiver em telas de login/cadastro, redireciona para a área correta
       const isAuthPage = (
         path.includes("login-cliente.html") ||
-        path.includes("login-lojista.html") ||
+        path.includes("admin/login.html") ||
         path.includes("signup.html") ||
-        path.includes("lojista-signup.html") ||
+        path.includes("admin/signup.html") ||
         path.includes("analise.html") ||
         path.endsWith("/login")
       );
@@ -212,7 +212,7 @@ try {
       // Evita confusão: se um lojista estiver logado e abrir a área do cliente,
       // desloga automaticamente para permitir login/cadastro como cliente.
       const isCustomerAuthPage = (path.includes("login-cliente.html") || path.includes("signup.html"));
-      const isOwnerAuthPage = (path.includes("login-lojista.html") || path.includes("lojista-signup.html"));
+      const isOwnerAuthPage = (path.includes("admin/login.html") || path.includes("admin/signup.html"));
 
       if (isCustomerAuthPage && role === "owner") {
         await signOut(auth);
@@ -226,7 +226,7 @@ try {
 
       if (isAuthPage) {
         if (role === "owner") {
-          window.location.href = ownerStatus === "approved" ? "admin-dashboard.html" : "analise.html";
+          window.location.href = ownerStatus === "approved" ? "admin/dashboard.html" : "analise.html";
         } else {
           
           window.location.href = "explore.html";
@@ -235,8 +235,8 @@ try {
 
     } else {
       if (isProtected) {
-        const isOwnerArea = path.includes("admin-dashboard") || path.includes("admin.html");
-        window.location.href = isOwnerArea ? "login-lojista.html" : "login-cliente.html";
+        const isOwnerArea = path.includes("admin-dashboard") || path.includes("admin/painel.html");
+        window.location.href = isOwnerArea ? "admin/login.html" : "login-cliente.html";
       }
     }
   });

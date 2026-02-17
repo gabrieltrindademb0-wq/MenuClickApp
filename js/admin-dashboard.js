@@ -5,7 +5,7 @@ import { logoutTo, checkLoginStatus } from "./auth.js";
 
 import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 import {
-  collection, query, where, getDocs, addDoc, onSnapshot,
+  collection, query, where, getDocs, getDoc, setDoc, addDoc, onSnapshot,
   updateDoc, doc, deleteDoc, orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -113,7 +113,7 @@ function previewFile(inputEl, imgEl){
 }
 
 // ------- UI events -------
-btnLogout?.addEventListener("click", () => logoutTo("login-lojista.html"));
+btnLogout?.addEventListener("click", () => logoutTo("admin/login.html"));
 
 tabBtns.forEach(b=>{
   b.addEventListener("click", ()=> setTab(b.dataset.tab));
@@ -141,20 +141,42 @@ async function loadMyRestaurant(uid, email){
     q = query(collection(db, "restaurants"), where("ownerEmail", "==", email));
     snap = await getDocs(q);
   }
+let data = null;
 
-  if (snap.empty){
-    elRestName.textContent = "Você ainda não tem uma loja.";
-    setStatus(false);
-    return;
-  }
+if (snap.empty){
+  // Se você apagou a coleção "restaurants" no Firestore, recriamos sua loja automaticamente
+  const ref = doc(db, "restaurants", uid);
+  const payload = {
+    ownerId: uid,
+    ownerEmail: email || "",
+    name: "Minha loja",
+    description: "",
+    segment: "restaurante",
+    categories: "",
+    cnpj: "",
+    address: { street:"", number:"", district:"", complement:"", city:"", cep:"" },
+    logoUrl: "",
+    isActive: true,
+    approvalStatus: "approved",
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+  await setDoc(ref, payload, { merge: true });
 
+  myRestaurantId = uid;
+  myRestaurantRef = ref;
+  data = payload;
+
+} else {
   const d = snap.docs[0];
   myRestaurantId = d.id;
   myRestaurantRef = d.ref;
+  data = d.data() || {};
+}
 
-  const data = d.data() || {};
-  elRestName.textContent = data.name || "Minha loja";
-  setStatus(!!data.isActive);
+elRestName.textContent = data.name || "Minha loja";
+setStatus(!!data.isActive);
+
 
   // Logo
   const logoUrl = data.logoUrl || "./assets/logo-menuclick.png";
